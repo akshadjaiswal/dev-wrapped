@@ -1,103 +1,176 @@
-export default function Home() {
+/**
+ * Landing Page
+ * Main entry point for DevWrapped
+ */
+
+'use client'
+
+import React, { useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { motion } from 'framer-motion'
+import { ThemeProvider } from '@/components/themes/ThemeProvider'
+import { UsernameInput } from '@/components/shared/UsernameInput'
+import { Code2, Sparkles, Share2, Zap } from 'lucide-react'
+import { trackUsernameEntered } from '@/lib/services/analytics'
+
+export default function LandingPage() {
+  const router = useRouter()
+  const [isSubmitting, setIsSubmitting] = useState(false)
+
+  const handleSubmit = async (username: string) => {
+    setIsSubmitting(true)
+
+    // Track analytics
+    trackUsernameEntered(username)
+
+    // Navigate to theme selection
+    router.push(`/generate/${username}`)
+  }
+
   return (
-    <main className="min-h-screen bg-white">
-      <div className="max-w-4xl mx-auto px-6 py-20">
+    <ThemeProvider theme="neon-dreams" showParticles showBackground>
+      <main className="min-h-screen flex flex-col">
         {/* Header */}
-        <header className="mb-20 border-b border-black pb-12">
-          <div className="mb-4">
-            <span className="text-xs font-light tracking-widest uppercase text-gray-600">
-              Generated with DevStart CLI
-            </span>
-          </div>
-          <h1 className="text-6xl md:text-8xl font-light tracking-tight text-black mb-6">
-            app
-          </h1>
-          <p className="text-xl font-light text-gray-600 max-w-2xl">
-            Production-ready application scaffolded in 30 seconds
-          </p>
+        <header className="w-full py-6 px-6 flex justify-between items-center">
+          <motion.div
+            className="flex items-center gap-3"
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <Code2 className="h-8 w-8 text-primary" />
+            <h1 className="text-2xl font-header font-bold text-primary">
+              DevWrapped
+            </h1>
+          </motion.div>
+
+          <motion.a
+            href="https://github.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-foreground/60 hover:text-foreground transition-colors text-sm font-body"
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            View on GitHub →
+          </motion.a>
         </header>
 
-        {/* Tech Stack */}
-        <section className="mb-20">
-          <h2 className="text-xs font-medium tracking-widest uppercase text-black mb-8 border-b border-gray-200 pb-3">
-            Your Stack
-          </h2>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
-            <div className="border border-gray-200 p-6 hover:border-black transition-colors">
-              <div className="text-xs font-light text-gray-500 mb-2">Styling</div>
-              <div className="font-light text-black">Tailwind CSS</div>
-            </div>
-            <div className="border border-gray-200 p-6 hover:border-black transition-colors">
-              <div className="text-xs font-light text-gray-500 mb-2">UI Components</div>
-              <div className="font-light text-black">shadcn/ui</div>
-            </div>
-            <div className="border border-gray-200 p-6 hover:border-black transition-colors">
-              <div className="text-xs font-light text-gray-500 mb-2">State</div>
-              <div className="font-light text-black">Zustand</div>
-            </div>
-            <div className="border border-gray-200 p-6 hover:border-black transition-colors">
-              <div className="text-xs font-light text-gray-500 mb-2">Data Fetching</div>
-              <div className="font-light text-black">TanStack Query</div>
-            </div>
-            <div className="border border-gray-200 p-6 hover:border-black transition-colors">
-              <div className="text-xs font-light text-gray-500 mb-2">Database</div>
-              <div className="font-light text-black">Supabase</div>
-            </div>
-            
+        {/* Hero Section */}
+        <section className="flex-1 flex flex-col items-center justify-center px-6 py-20">
+          <div className="max-w-4xl mx-auto text-center space-y-8">
+            {/* Main Heading */}
+            <motion.div
+              className="space-y-4"
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+            >
+              <h2 className="text-5xl md:text-7xl font-header font-bold text-foreground leading-tight">
+                Your Code Year,{' '}
+                <span className="text-primary text-glow-primary">
+                  Visualized
+                </span>
+              </h2>
+              <p className="text-xl md:text-2xl font-body text-foreground/80 max-w-2xl mx-auto">
+                See your 2025 GitHub journey as a stunning story.
+                <br />
+                Free. No sign-up. 30 seconds.
+              </p>
+            </motion.div>
+
+            {/* Username Input */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.4 }}
+              className="flex justify-center"
+            >
+              <UsernameInput
+                onSubmit={handleSubmit}
+                isLoading={isSubmitting}
+                placeholder="github-username"
+              />
+            </motion.div>
+
+            {/* Features */}
+            <motion.div
+              className="grid grid-cols-1 sm:grid-cols-3 gap-6 pt-12"
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.6 }}
+            >
+              <FeatureCard
+                icon={<Zap className="h-6 w-6" />}
+                title="30 Seconds"
+                description="Instant generation. No waiting around."
+              />
+              <FeatureCard
+                icon={<Sparkles className="h-6 w-6" />}
+                title="5 Themes"
+                description="Choose your vibe. Make it yours."
+              />
+              <FeatureCard
+                icon={<Share2 className="h-6 w-6" />}
+                title="Share Anywhere"
+                description="One tap to social. Spread the wrap."
+              />
+            </motion.div>
           </div>
         </section>
 
-        {/* Quick Start */}
-        <section className="mb-20 border border-black p-8">
-          <h2 className="text-xs font-medium tracking-widest uppercase text-black mb-6">
-            Quick Start
-          </h2>
-          <div className="space-y-4 font-light text-gray-700">
-            <div className="flex items-start gap-3">
-              <span className="text-gray-400 mt-1">01</span>
-              <p>Edit <code className="bg-gray-50 border border-gray-200 px-2 py-1 text-sm font-mono text-black">app/page.tsx</code> to customize this page</p>
-            </div>
-            <div className="flex items-start gap-3">
-              <span className="text-gray-400 mt-1">02</span>
-              <p>Configure environment variables in <code className="bg-gray-50 border border-gray-200 px-2 py-1 text-sm font-mono text-black">.env.local.example</code></p>
-            </div>
-            <div className="flex items-start gap-3">
-              <span className="text-gray-400 mt-1">03</span>
-              <p>Your integrations are ready to use in the <code className="bg-gray-50 border border-gray-200 px-2 py-1 text-sm font-mono text-black">lib/</code> folder</p>
-            </div>
-          </div>
-        </section>
+        {/* Social Proof */}
+        <motion.section
+          className="py-12 px-6 text-center"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.6, delay: 0.8 }}
+        >
+          <p className="text-foreground/60 font-body text-sm">
+            Join thousands of developers sharing their 2025 journey
+          </p>
+        </motion.section>
 
-        {/* Footer / DevStart Promo */}
-        <footer className="border-t border-gray-200 pt-12">
-          <div className="mb-8">
-            <p className="text-sm font-light text-gray-600 mb-6">
-              This project was scaffolded in 30 seconds, saving you 2-4 hours of manual configuration.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4">
-              <a
-                href="https://github.com/akshadjaiswal/devstart"
-                className="inline-block border border-black px-6 py-3 text-sm font-light hover:bg-black hover:text-white transition-colors text-center"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                ★ Star on GitHub
-              </a>
-              <a
-                href="https://www.npmjs.com/package/devstart-cli"
-                className="inline-block border border-gray-300 px-6 py-3 text-sm font-light hover:border-black transition-colors text-center"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                View on npm
-              </a>
-            </div>
-          </div>
-          <div className="text-xs font-light text-gray-500">
-            <code className="bg-gray-50 border border-gray-200 px-2 py-1 font-mono">npx devstart-cli init</code>
-          </div>
+        {/* Footer */}
+        <footer className="w-full py-6 px-6 text-center border-t border-theme">
+          <motion.p
+            className="text-foreground/50 font-body text-sm"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.6, delay: 1 }}
+          >
+            Built with{' '}
+            <span className="text-primary">Next.js</span>,{' '}
+            <span className="text-secondary">Supabase</span>, and{' '}
+            <span className="text-accent">Framer Motion</span>
+          </motion.p>
         </footer>
-      </div>
-    </main>
+      </main>
+    </ThemeProvider>
+  )
+}
+
+// Feature Card Component
+function FeatureCard({
+  icon,
+  title,
+  description,
+}: {
+  icon: React.ReactNode
+  title: string
+  description: string
+}) {
+  return (
+    <motion.div
+      className="card-theme p-6 space-y-3 hover:scale-105 transition-transform duration-300"
+      whileHover={{ y: -5 }}
+    >
+      <div className="flex justify-center text-primary">{icon}</div>
+      <h3 className="font-header font-semibold text-lg text-foreground">
+        {title}
+      </h3>
+      <p className="font-body text-sm text-foreground/70">{description}</p>
+    </motion.div>
   )
 }
