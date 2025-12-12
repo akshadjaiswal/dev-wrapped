@@ -1,13 +1,23 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
-
-const inter = Inter({ subsets: ['latin'], weight: ['300', '400', '500', '600'] })
 import { QueryProvider } from '@/lib/query-provider'
 
+const inter = Inter({ subsets: ['latin'], weight: ['300', '400', '500', '600', '700'] })
+
 export const metadata: Metadata = {
-  title: 'app',
-  description: 'Built with DevStart CLI',
+  title: 'DevWrapped - Your Code Year, Visualized',
+  description: 'See your 2024 GitHub journey as a stunning story. Free. No sign-up. 30 seconds.',
+  openGraph: {
+    title: 'DevWrapped - Your Code Year, Visualized',
+    description: 'See your 2024 GitHub journey as a stunning story.',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'DevWrapped - Your Code Year, Visualized',
+    description: 'See your 2024 GitHub journey as a stunning story.',
+  },
 }
 
 export default function RootLayout({
@@ -17,7 +27,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}><QueryProvider>{children}</QueryProvider></body>
+      <body className={inter.className}>
+        <QueryProvider>{children}</QueryProvider>
+      </body>
     </html>
   )
 }
