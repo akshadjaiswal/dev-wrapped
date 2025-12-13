@@ -77,26 +77,106 @@ export default function ThemeSelectionPage() {
     router.push('/')
   }
 
+  // Get error information based on error type
+  const getErrorInfo = (error: Error, username: string) => {
+    const errorMessage = error.message.toLowerCase()
+
+    if (errorMessage.includes('user not found') || errorMessage.includes('404')) {
+      return {
+        emoji: '🔍',
+        title: 'User Not Found',
+        message: `We couldn't find a GitHub user named "${username}".`,
+        suggestions: [
+          'Double-check the spelling',
+          'Make sure the profile is public',
+          `Try searching on github.com/${username}`,
+        ],
+        buttonText: 'Search Another User',
+      }
+    }
+
+    if (errorMessage.includes('rate limit') || errorMessage.includes('403')) {
+      return {
+        emoji: '⏰',
+        title: 'Rate Limit Reached',
+        message: 'GitHub API rate limit exceeded. Please wait a few minutes.',
+        suggestions: [
+          'Wait 5-10 minutes and try again',
+          'Rate limits reset every hour',
+          'Authenticated requests have higher limits',
+        ],
+        buttonText: 'Go Back',
+      }
+    }
+
+    if (errorMessage.includes('network') || errorMessage.includes('timeout')) {
+      return {
+        emoji: '🌐',
+        title: 'Connection Error',
+        message: 'Unable to connect to GitHub. Please check your internet connection.',
+        suggestions: [
+          'Check your internet connection',
+          'Try again in a few moments',
+          'GitHub might be experiencing issues',
+        ],
+        buttonText: 'Try Again',
+      }
+    }
+
+    return {
+      emoji: '😅',
+      title: 'Oops! Something Went Wrong',
+      message: error.message || 'Failed to fetch GitHub data',
+      suggestions: [
+        'Try again in a few moments',
+        'Check if the username is correct',
+        'Contact support if the issue persists',
+      ],
+      buttonText: 'Go Back',
+    }
+  }
+
   // Error state
   if (error) {
+    const errorInfo = getErrorInfo(error as Error, username)
+
     return (
       <ThemeProvider theme="neon-dreams">
         <div className="min-h-screen flex items-center justify-center p-6">
           <motion.div
-            className="max-w-md w-full card-theme p-8 text-center space-y-6"
+            className="max-w-lg w-full card-theme p-10 text-center space-y-6"
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
           >
-            <div className="text-6xl">😅</div>
-            <h2 className="text-2xl font-header font-bold text-foreground">
-              Oops! Something went wrong
-            </h2>
-            <p className="font-body text-foreground/70">
-              {error instanceof Error ? error.message : 'Failed to fetch GitHub data'}
-            </p>
-            <Button onClick={handleBack} variant="primary">
+            <div className="text-7xl">{errorInfo.emoji}</div>
+
+            <div className="space-y-2">
+              <h2 className="text-3xl font-header font-bold text-foreground">
+                {errorInfo.title}
+              </h2>
+              <p className="text-lg font-body text-foreground/80">
+                {errorInfo.message}
+              </p>
+            </div>
+
+            <div className="bg-background/30 rounded-lg p-4 space-y-2">
+              <p className="text-sm font-body font-semibold text-foreground/70 mb-2">
+                Suggestions:
+              </p>
+              {errorInfo.suggestions.map((suggestion, index) => (
+                <p
+                  key={index}
+                  className="text-sm font-body text-foreground/60 flex items-start gap-2"
+                >
+                  <span className="text-primary mt-0.5">✓</span>
+                  <span>{suggestion}</span>
+                </p>
+              ))}
+            </div>
+
+            <Button onClick={handleBack} variant="primary" size="lg" className="w-full">
               <ArrowLeft className="h-4 w-4 mr-2" />
-              Try Again
+              {errorInfo.buttonText}
             </Button>
           </motion.div>
         </div>
