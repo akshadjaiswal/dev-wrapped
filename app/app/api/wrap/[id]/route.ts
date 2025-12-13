@@ -15,10 +15,10 @@ export const runtime = 'nodejs'
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params
+    const { id } = await params
 
     // Validate ID format (UUID)
     const uuidRegex =
@@ -33,7 +33,7 @@ export async function GET(
       )
     }
 
-    const supabase = createClient()
+    const supabase = await createClient()
 
     // Fetch wrap data
     const { data: wrap, error } = await supabase

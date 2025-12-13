@@ -9,13 +9,20 @@ import type { DeveloperPersonality } from '@/lib/types'
 const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions'
 const GROQ_API_KEY = process.env.GROQ_API_KEY || ''
 
-// Groq configuration as specified
+// Groq configuration - using fast, reliable model
 export const GROQ_CONFIG = {
-  model: 'llama-3.1-70b-versatile',
+  model: 'llama-3.1-8b-instant', // Faster, more reliable model
   temperature: 0.7,
   maxTokens: 300,
   topP: 1,
 } as const
+
+// Fallback models to try if primary fails
+const FALLBACK_MODELS = [
+  'llama-3.1-8b-instant',
+  'mixtral-8x7b-32768',
+  'llama-3.1-70b-versatile',
+]
 
 /**
  * Developer personality archetypes
@@ -107,34 +114,57 @@ export async function analyzePersonality(stats: {
   try {
     const prompt = buildPersonalityPrompt(stats)
 
-    const response = await axios.post(
-      GROQ_API_URL,
-      {
-        model: GROQ_CONFIG.model,
-        messages: [
+    // Try primary model first, then fallbacks
+    let response
+    let lastError
+
+    for (const model of FALLBACK_MODELS) {
+      try {
+        console.log(`[GROQ] Trying model: ${model}`)
+
+        response = await axios.post(
+          GROQ_API_URL,
           {
-            role: 'system',
-            content:
-              'You are a developer personality analyst. Return ONLY valid JSON, no markdown.',
+            model: model,
+            messages: [
+              {
+                role: 'system',
+                content:
+                  'You are a developer personality analyst. Return ONLY valid JSON, no markdown.',
+              },
+              {
+                role: 'user',
+                content: prompt,
+              },
+            ],
+            temperature: GROQ_CONFIG.temperature,
+            max_tokens: GROQ_CONFIG.maxTokens,
+            top_p: GROQ_CONFIG.topP,
+            response_format: { type: 'json_object' },
           },
           {
-            role: 'user',
-            content: prompt,
-          },
-        ],
-        temperature: GROQ_CONFIG.temperature,
-        max_tokens: GROQ_CONFIG.maxTokens,
-        top_p: GROQ_CONFIG.topP,
-        response_format: { type: 'json_object' },
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${GROQ_API_KEY}`,
-          'Content-Type': 'application/json',
-        },
-        timeout: 30000, // 30 second timeout
+            headers: {
+              Authorization: `Bearer ${GROQ_API_KEY}`,
+              'Content-Type': 'application/json',
+            },
+            timeout: 30000, // 30 second timeout
+          }
+        )
+
+        console.log(`[GROQ] Success with model: ${model}`)
+        break // Success! Exit loop
+      } catch (err) {
+        console.error(`[GROQ] Model ${model} failed:`, err instanceof Error ? err.message : err)
+        lastError = err
+        // Try next model
+        continue
       }
-    )
+    }
+
+    // If all models failed, throw the last error
+    if (!response) {
+      throw lastError || new Error('All Groq models failed')
+    }
 
     const content = response.data.choices[0]?.message?.content
 
@@ -163,9 +193,20 @@ export async function analyzePersonality(stats: {
 
     return parsed
   } catch (error) {
-    console.error('Failed to analyze personality with Groq:', error)
+    // Log detailed error information
+    if (axios.isAxiosError(error)) {
+      console.error('[GROQ] Axios error:', {
+        status: error.response?.status,
+        statusText: error.response?.statusText,
+        data: error.response?.data,
+        message: error.message,
+      })
+    } else {
+      console.error('[GROQ] Unknown error:', error)
+    }
 
-    // Try to determine archetype based on stats as fallback
+    // Use rule-based fallback
+    console.log('[GROQ] Using rule-based fallback personality')
     return determineFallbackArchetype(stats)
   }
 }

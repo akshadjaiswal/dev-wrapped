@@ -25,13 +25,13 @@ export const maxDuration = 60 // 60 seconds max
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { username: string } }
+  { params }: { params: Promise<{ username: string }> }
 ) {
   const startTime = Date.now()
 
   try {
-    const { username } = params
-    const year = 2024 // Hardcoded for MVP
+    const { username } = await params
+    const year = 2025 // Current year
 
     // Validate username
     if (!username || username.trim().length === 0) {
@@ -56,7 +56,7 @@ export async function GET(
       )
     }
 
-    const supabase = createClient()
+    const supabase = await createClient()
 
     // Check cache first (if wrap exists and is recent)
     const { data: cachedWrap } = await supabase
@@ -83,8 +83,8 @@ export async function GET(
 
     console.log(`[ANALYZE] Fetching fresh data for ${username}`)
 
-    // Fetch GitHub data
-    const githubData = await fetchCompleteGitHubData(username)
+    // Fetch GitHub data with year parameter for GraphQL
+    const githubData = await fetchCompleteGitHubData(username, year)
 
     // Process data into wrap format
     const wrapData = processGitHubDataToWrap(githubData, year)

@@ -5,7 +5,7 @@
 
 'use client'
 
-import React, { useMemo } from 'react'
+import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 
 interface Orb {
@@ -19,7 +19,9 @@ interface Orb {
 }
 
 export function FloatingOrbs() {
-  const orbs = useMemo(() => {
+  const [orbs, setOrbs] = useState<Orb[]>([])
+
+  useEffect(() => {
     const count = 12
     const colors = [
       'rgba(255, 107, 53, 0.4)', // primary
@@ -40,7 +42,7 @@ export function FloatingOrbs() {
       })
     }
 
-    return result
+    setOrbs(result)
   }, [])
 
   return (

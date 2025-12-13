@@ -84,6 +84,14 @@ export interface GitHubContribution {
   level: 0 | 1 | 2 | 3 | 4
 }
 
+export interface RepositoryCommitStats {
+  name: string
+  owner: string
+  commits: number
+  stars: number
+  language: string | null
+}
+
 export interface ProcessedGitHubData {
   user: GitHubUser
   repos: GitHubRepo[]
@@ -92,6 +100,9 @@ export interface ProcessedGitHubData {
   totalForks: number
   languages: LanguageStats[]
   contributions: GitHubContribution[]
+  totalCommits?: number // From GraphQL API
+  graphqlContributions?: GitHubContribution[] // From GraphQL calendar
+  repositoryCommits?: RepositoryCommitStats[] // From GraphQL per-repo contributions
 }
 
 export interface LanguageStats {

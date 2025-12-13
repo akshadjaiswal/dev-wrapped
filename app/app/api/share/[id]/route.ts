@@ -15,10 +15,10 @@ export const runtime = 'nodejs'
  */
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params
+    const { id } = await params
 
     // Validate ID format (UUID)
     const uuidRegex =
@@ -49,7 +49,7 @@ export async function POST(
       )
     }
 
-    const supabase = createClient()
+    const supabase = await createClient()
 
     // Check if wrap exists
     const { data: wrap } = await supabase

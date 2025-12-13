@@ -5,7 +5,7 @@
 
 'use client'
 
-import React, { useMemo } from 'react'
+import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 
 interface Shape {
@@ -19,7 +19,9 @@ interface Shape {
 }
 
 export function GeometricShapes() {
-  const shapes = useMemo(() => {
+  const [shapes, setShapes] = useState<Shape[]>([])
+
+  useEffect(() => {
     const count = 25
     const result: Shape[] = []
 
@@ -36,7 +38,7 @@ export function GeometricShapes() {
       })
     }
 
-    return result
+    setShapes(result)
   }, [])
 
   const renderShape = (shape: Shape) => {
