@@ -5,7 +5,7 @@
 
 'use client'
 
-import React, { useMemo } from 'react'
+import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 
 interface Particle {
@@ -18,7 +18,10 @@ interface Particle {
 }
 
 export function NeonParticles() {
-  const particles = useMemo(() => {
+  const [particles, setParticles] = useState<Particle[]>([])
+
+  // Generate particles only on client to avoid hydration mismatch
+  useEffect(() => {
     const count = 20
     const result: Particle[] = []
 
@@ -33,7 +36,7 @@ export function NeonParticles() {
       })
     }
 
-    return result
+    setParticles(result)
   }, [])
 
   return (

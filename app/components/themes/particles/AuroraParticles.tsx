@@ -5,7 +5,7 @@
 
 'use client'
 
-import React, { useMemo } from 'react'
+import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 
 interface Star {
@@ -18,7 +18,9 @@ interface Star {
 }
 
 export function AuroraParticles() {
-  const stars = useMemo(() => {
+  const [stars, setStars] = useState<Star[]>([])
+
+  useEffect(() => {
     const count = 50
     const result: Star[] = []
 
@@ -33,7 +35,7 @@ export function AuroraParticles() {
       })
     }
 
-    return result
+    setStars(result)
   }, [])
 
   return (

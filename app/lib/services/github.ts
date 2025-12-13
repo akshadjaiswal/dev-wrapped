@@ -9,22 +9,71 @@ import type {
   GitHubRepo,
   GitHubEvent,
   GitHubLanguage,
+  GitHubContribution,
   ProcessedGitHubData,
   LanguageStats,
 } from '@/lib/types'
 
 const GITHUB_API_BASE = 'https://api.github.com'
-const GITHUB_TOKEN = process.env.GITHUB_TOKEN || '' // Optional: for higher rate limits
 
-// Configure axios instance
+// Get token - will be checked at runtime
+function getGitHubToken(): string {
+  return process.env.GITHUB_TOKEN || ''
+}
+
+// Log token status at module load
+const tokenAtLoad = getGitHubToken()
+console.log('[GITHUB] Token status:', {
+  exists: !!tokenAtLoad,
+  length: tokenAtLoad.length,
+  prefix: tokenAtLoad.substring(0, 4),
+})
+
+if (tokenAtLoad) {
+  console.log('[GITHUB] ✅ Using authenticated requests (5000 req/hour)')
+} else {
+  console.warn('[GITHUB] ⚠️  No GITHUB_TOKEN found - using unauthenticated requests (60 req/hour)')
+  console.warn('[GITHUB] Add GITHUB_TOKEN to .env.local to avoid rate limits')
+}
+
+// Configure axios instance with interceptor to add token dynamically
 const githubClient = axios.create({
   baseURL: GITHUB_API_BASE,
   headers: {
     Accept: 'application/vnd.github.v3+json',
-    ...(GITHUB_TOKEN && { Authorization: `Bearer ${GITHUB_TOKEN}` }),
   },
   timeout: 30000, // 30 second timeout
 })
+
+// Add request interceptor to inject token on each request
+githubClient.interceptors.request.use((config) => {
+  const token = getGitHubToken()
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`
+  }
+  return config
+})
+
+// Add response interceptor to log rate limit info
+githubClient.interceptors.response.use(
+  (response) => {
+    const remaining = response.headers['x-ratelimit-remaining']
+    const limit = response.headers['x-ratelimit-limit']
+    if (remaining) {
+      console.log(`[GITHUB] Rate limit: ${remaining}/${limit} remaining`)
+    }
+    return response
+  },
+  (error) => {
+    // Log rate limit on errors too
+    if (error.response) {
+      const remaining = error.response.headers['x-ratelimit-remaining']
+      const limit = error.response.headers['x-ratelimit-limit']
+      console.error(`[GITHUB] Rate limit on error: ${remaining}/${limit} remaining`)
+    }
+    return Promise.reject(error)
+  }
+)
 
 // Language colors (common languages)
 const LANGUAGE_COLORS: Record<string, string> = {
@@ -194,10 +243,11 @@ export async function fetchUserEvents(username: string): Promise<GitHubEvent[]> 
       page++
     }
 
+    console.log(`[GITHUB] Fetched ${events.length} events for ${username}`)
     return events
   } catch (error) {
     // Events are not critical, return empty array if fails
-    console.error('Failed to fetch events:', error)
+    console.error('[GITHUB] Failed to fetch events:', error)
     return []
   }
 }
@@ -287,7 +337,8 @@ export function getCollaborationStats(events: GitHubEvent[]): {
  * Main function: Fetch and process all GitHub data for a user
  */
 export async function fetchCompleteGitHubData(
-  username: string
+  username: string,
+  year: number = 2025
 ): Promise<ProcessedGitHubData> {
   try {
     // Fetch user profile
@@ -306,6 +357,65 @@ export async function fetchCompleteGitHubData(
     // Get language statistics
     const languages = await calculateLanguageStats(repos, username)
 
+    // Fetch GraphQL contributions for accurate commit data
+    let totalCommits = 0
+    let graphqlContributions: GitHubContribution[] = []
+    let repositoryCommits: Array<{
+      name: string
+      owner: string
+      commits: number
+      stars: number
+      language: string | null
+    }> = []
+
+    try {
+      const { fetchContributionsGraphQL, getYearDateRange } = await import('./github-graphql')
+      const { from, to } = getYearDateRange(year)
+
+      console.log(`[GITHUB] Fetching GraphQL contributions from ${from} to ${to}`)
+      const contributionsData = await fetchContributionsGraphQL(username, from, to)
+
+      totalCommits = contributionsData.totalCommitContributions
+
+      // Convert GraphQL calendar to our format
+      graphqlContributions = contributionsData.contributionCalendar.weeks.flatMap((week) =>
+        week.contributionDays.map((day) => {
+          // Calculate level based on contribution count
+          let level: 0 | 1 | 2 | 3 | 4 = 0
+          if (day.contributionCount > 0) {
+            if (day.contributionCount >= 10) level = 4
+            else if (day.contributionCount >= 7) level = 3
+            else if (day.contributionCount >= 4) level = 2
+            else level = 1
+          }
+
+          return {
+            date: day.date,
+            count: day.contributionCount,
+            level,
+          }
+        })
+      )
+
+      // Extract per-repository commit counts
+      if (contributionsData.commitContributionsByRepository) {
+        repositoryCommits = contributionsData.commitContributionsByRepository.map((repoContrib) => ({
+          name: repoContrib.repository.name,
+          owner: repoContrib.repository.owner.login,
+          commits: repoContrib.contributions.totalCount,
+          stars: repoContrib.repository.stargazerCount,
+          language: repoContrib.repository.primaryLanguage?.name || null,
+        }))
+
+        console.log(`[GITHUB] ✅ GraphQL: ${totalCommits} commits across ${repositoryCommits.length} repositories`)
+      }
+
+      console.log(`[GITHUB] ✅ GraphQL: ${graphqlContributions.length} days of contribution data`)
+    } catch (graphqlError) {
+      console.error('[GITHUB] GraphQL fetch failed, falling back to events API:', graphqlError)
+      // GraphQL failed, we'll fall back to events API in calculations
+    }
+
     // Return processed data
     return {
       user,
@@ -314,7 +424,10 @@ export async function fetchCompleteGitHubData(
       totalStars,
       totalForks,
       languages,
-      contributions: [], // Will be populated by contribution scraper if needed
+      contributions: graphqlContributions,
+      totalCommits,
+      graphqlContributions,
+      repositoryCommits,
     }
   } catch (error) {
     if (error instanceof GitHubAPIError) {

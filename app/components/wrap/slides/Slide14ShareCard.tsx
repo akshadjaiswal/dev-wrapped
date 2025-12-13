@@ -136,7 +136,7 @@ export function Slide14ShareCard({ data, theme }: SlideProps) {
             <Button
               onClick={handleDownload}
               disabled={isGenerating}
-              variant="default"
+              variant="primary"
               className="flex items-center gap-2"
             >
               <Download className="h-4 w-4" />

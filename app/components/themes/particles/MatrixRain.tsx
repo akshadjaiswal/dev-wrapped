@@ -5,7 +5,7 @@
 
 'use client'
 
-import React, { useMemo } from 'react'
+import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 
 interface RainColumn {
@@ -19,7 +19,9 @@ interface RainColumn {
 const MATRIX_CHARS = '01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン'
 
 export function MatrixRain() {
-  const columns = useMemo(() => {
+  const [columns, setColumns] = useState<RainColumn[]>([])
+
+  useEffect(() => {
     const count = 30
     const result: RainColumn[] = []
 
@@ -38,7 +40,7 @@ export function MatrixRain() {
       })
     }
 
-    return result
+    setColumns(result)
   }, [])
 
   return (

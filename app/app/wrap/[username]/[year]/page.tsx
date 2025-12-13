@@ -39,7 +39,7 @@ export default function WrapPage() {
   const username = params.username as string
   const year = parseInt(params.year as string, 10)
 
-  const { currentTheme } = useThemeStore()
+  const { selectedTheme: currentTheme } = useThemeStore()
   const wrapData = useWrapStore((state) => state.wrapData)
 
   // Fetch wrap data
@@ -84,7 +84,7 @@ export default function WrapPage() {
               {error?.message || 'Failed to load wrap data'}
             </p>
           </div>
-          <Button onClick={() => router.push('/')} variant="default">
+          <Button onClick={() => router.push('/')} variant="primary">
             <Home className="h-4 w-4 mr-2" />
             Back to Home
           </Button>

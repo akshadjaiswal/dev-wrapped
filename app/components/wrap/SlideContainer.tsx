@@ -132,7 +132,7 @@ export function SlideContainer({ children, totalSlides = 14 }: SlideContainerPro
           role="article"
           aria-label={`Slide ${currentSlide} of ${totalSlides}`}
         >
-          {children}
+          {React.Children.toArray(children)[currentSlide - 1]}
         </motion.div>
       </AnimatePresence>
 
