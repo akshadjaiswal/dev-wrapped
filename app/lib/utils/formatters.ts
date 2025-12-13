@@ -84,14 +84,22 @@ export function getTimeRange(preference: 'morning' | 'afternoon' | 'evening' | '
 }
 
 /**
- * Get collaboration badge
+ * Get contribution badge based on overall activity
  */
-export function getCollaborationBadge(prs: number, issues: number): string {
+export function getContributionBadge(prs: number, issues: number, commits: number): string {
   const total = prs + issues
   if (total === 0) return 'Solo Builder'
   if (total < 10) return 'Team Player'
   if (total < 50) return 'Active Contributor'
+  if (total < 100) return 'Community Champion'
   return 'Open Source Hero'
+}
+
+/**
+ * Get collaboration badge (legacy support)
+ */
+export function getCollaborationBadge(prs: number, issues: number): string {
+  return getContributionBadge(prs, issues, 0)
 }
 
 /**
@@ -105,13 +113,20 @@ export function getLanguageBadge(languageCount: number): string {
 }
 
 /**
- * Get developer profile type
+ * Get developer profile type based on language distribution
  */
-export function getDeveloperProfileType(primaryLanguage: string): string {
+export function getDeveloperProfileType(languages: Array<{ name: string; percentage: number }>): string {
+  if (!languages || languages.length === 0) return 'Code Explorer'
+
+  const primaryLanguage = languages[0].name
   const frontendLanguages = ['JavaScript', 'TypeScript', 'HTML', 'CSS', 'Vue', 'React', 'Svelte']
   const backendLanguages = ['Python', 'Java', 'Go', 'Ruby', 'PHP', 'C#', 'Rust', 'Elixir']
   const dataLanguages = ['Python', 'R', 'Julia', 'MATLAB']
   const mobileLanguages = ['Swift', 'Kotlin', 'Dart', 'Objective-C']
+
+  // Check if polyglot (3+ languages with significant usage)
+  const significantLanguages = languages.filter(l => l.percentage > 15)
+  if (significantLanguages.length >= 3) return 'Polyglot Engineer'
 
   if (frontendLanguages.includes(primaryLanguage)) return 'Frontend Artist'
   if (backendLanguages.includes(primaryLanguage)) return 'Backend Architect'

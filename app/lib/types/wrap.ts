@@ -20,8 +20,10 @@ export interface WrapData {
   public_repos: number
   new_repos_2024: number
   total_stars: number
+  total_stars_earned: number // Stars earned this year
   total_forks: number
   followers: number
+  followers_gained: number // Followers gained this year
 
   // Language Data
   primary_language: string
@@ -41,14 +43,21 @@ export interface WrapData {
 
   // Collaboration
   prs_created: number
+  total_prs: number // Total PRs (created + reviewed)
+  merged_prs: number // PRs that were merged
+  prs_reviewed: number // PRs reviewed
   issues_closed: number
+  total_issues: number // Total issues (opened + closed)
+  issues_opened: number // Issues opened
   repos_contributed: number
+  days_active: number // Total days with at least one commit
 
   // Calculated Insights
   commits_per_day: number
   growth_vs_last_year: number | null
   developer_personality: string
   personality_description: string
+  personality_summary: string | null // AI-generated summary
   personality_traits: string[]
 
   // Fun Stats
