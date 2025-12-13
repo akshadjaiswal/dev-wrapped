@@ -4,8 +4,8 @@
 
 **Your GitHub Year in Review - Wrapped with Style**
 
-[![Next.js](https://img.shields.io/badge/Next.js-15-black?style=flat&logo=next.js)](https://nextjs.org/)
-[![React](https://img.shields.io/badge/React-18-61dafb?style=flat&logo=react)](https://reactjs.org/)
+[![Next.js](https://img.shields.io/badge/Next.js-16-black?style=flat&logo=next.js)](https://nextjs.org/)
+[![React](https://img.shields.io/badge/React-19-61dafb?style=flat&logo=react)](https://reactjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-3178c6?style=flat&logo=typescript)](https://www.typescriptlang.org/)
 [![Supabase](https://img.shields.io/badge/Supabase-latest-3ecf8e?style=flat&logo=supabase)](https://supabase.com/)
 [![Framer Motion](https://img.shields.io/badge/Framer_Motion-11-ff0055?style=flat&logo=framer)](https://www.framer.com/motion/)
