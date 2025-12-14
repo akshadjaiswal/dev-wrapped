@@ -14,7 +14,7 @@
 
 *Experience your GitHub activity like never before - beautiful animations, AI-powered insights, and shareable year-in-review*
 
-[🚀 Try Demo](https://devwrapped.vercel.app) • [📖 Docs](./my_docs) • [🐛 Report Bug](https://github.com/akshadjaiswal/dev-wrapped/issues)
+[🚀 Try Demo](https://dev-wrapped.vercel.app) • [📖 Docs](./my_docs) • [🐛 Report Bug](https://github.com/akshadjaiswal/dev-wrapped/issues)
 
 </div>
 
@@ -287,19 +287,13 @@ npm run build  # Ensure production build works
 
 ---
 
-## 📄 License
-
-This project is licensed under the **MIT License** - see [LICENSE](LICENSE) file for details.
-
----
-
 ## 👨‍💻 Author
 
 **Akshad Jaiswal**
 
 - 🐙 GitHub: [@akshadjaiswal](https://github.com/akshadjaiswal)
 - 🐦 Twitter: [@akshad_999](https://twitter.com/akshad_999)
-- 💼 LinkedIn: [Akshad Jaiswal](https://linkedin.com/in/akshad-jaiswal)
+- 💼 LinkedIn: [Akshad Jaiswal](https://linkedin.com/in/akshadsantoshjaiswal)
 
 ---
 
@@ -319,6 +313,6 @@ This project is licensed under the **MIT License** - see [LICENSE](LICENSE) file
 
 ⭐ **Star this repo** if DevWrapped made you smile!
 
-[🚀 Try DevWrapped]() •[🐛 Report Issue](https://github.com/akshadjaiswal/dev-wrapped/issues)
+[🚀 Try DevWrapped](https://dev-wrapped.vercel.app) •[🐛 Report Issue](https://github.com/akshadjaiswal/dev-wrapped/issues)
 
 </div>
