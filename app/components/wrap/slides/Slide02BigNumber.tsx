@@ -16,11 +16,11 @@ export function Slide02BigNumber({ data }: SlideProps) {
         <NumberCounter
           value={data.total_commits}
           duration={2.5}
-          className="text-9xl md:text-[12rem] font-header font-bold text-primary text-glow-primary"
+          className="text-6xl sm:text-8xl md:text-9xl lg:text-[12rem] font-header font-bold text-primary text-glow-primary"
         />
 
         <FadeInUp delay={1}>
-          <p className="text-3xl md:text-5xl font-body text-foreground">
+          <p className="text-xl sm:text-2xl md:text-3xl lg:text-5xl font-body text-foreground">
             Commits in 2025
           </p>
         </FadeInUp>

@@ -63,12 +63,18 @@ export function calculateMostActiveMonth(events: GitHubEvent[]): string {
   const monthCounts: Record<number, number> = {}
 
   for (const event of events) {
-    const month = getMonth(parseISO(event.created_at))
-    monthCounts[month] = (monthCounts[month] || 0) + 1
+    if (event.type === 'PushEvent') {
+      const month = getMonth(parseISO(event.created_at))
+      // Count actual commits, not just events
+      const commitCount = event.payload?.commits?.length || 1
+      monthCounts[month] = (monthCounts[month] || 0) + commitCount
+    }
   }
 
-  const mostActiveMonthNum = Object.entries(monthCounts).reduce((max, [month, count]) => {
-    return count > (monthCounts[max] || 0) ? parseInt(month) : max
+  // Find month with most commits - fix type coercion
+  const mostActiveMonthNum = Object.entries(monthCounts).reduce((maxMonth, [month, count]) => {
+    const currentMonth = parseInt(month)
+    return count > (monthCounts[maxMonth] || 0) ? currentMonth : maxMonth
   }, 0)
 
   const monthNames = [
@@ -98,7 +104,9 @@ export function calculateMonthlyActivity(events: GitHubEvent[]): MonthlyActivity
   for (const event of events) {
     if (event.type === 'PushEvent') {
       const month = getMonth(parseISO(event.created_at))
-      monthCounts[month] = (monthCounts[month] || 0) + 1
+      // Count actual commits in the push, not just the event
+      const commitCount = event.payload?.commits?.length || 1
+      monthCounts[month] = (monthCounts[month] || 0) + commitCount
     }
   }
 
@@ -531,7 +539,7 @@ export function processGitHubDataToWrap(
     year,
 
     total_commits: totalCommits,
-    total_repos: repos.length,
+    total_repos: repositoryCommits?.length || repos.length, // Use repos with commits in year (from GraphQL) when available
     public_repos: user.public_repos,
     new_repos_2024: newRepos,
     total_stars: totalStars,

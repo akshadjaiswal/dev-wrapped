@@ -63,7 +63,7 @@ export function GradientMesh() {
           </motion.radialGradient>
 
           <filter id="blur">
-            <feGaussianBlur stdDeviation="80" />
+            <feGaussianBlur stdDeviation="50" /> {/* Reduced from 80 for better GPU performance */}
           </filter>
         </defs>
 

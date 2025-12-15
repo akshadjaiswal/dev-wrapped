@@ -22,7 +22,7 @@ export function FloatingOrbs() {
   const [orbs, setOrbs] = useState<Orb[]>([])
 
   useEffect(() => {
-    const count = 12
+    const count = 4 // Reduced from 12 for performance (67% reduction)
     const colors = [
       'rgba(255, 107, 53, 0.4)', // primary
       'rgba(247, 147, 30, 0.4)', // secondary
@@ -33,7 +33,7 @@ export function FloatingOrbs() {
     for (let i = 0; i < count; i++) {
       result.push({
         id: i,
-        size: Math.random() * 150 + 80, // 80-230px
+        size: Math.random() * 100 + 80, // Reduced from 150+80 (80-180px now)
         x: Math.random() * 100,
         y: Math.random() * 100,
         delay: Math.random() * 3,
@@ -57,7 +57,7 @@ export function FloatingOrbs() {
             width: orb.size,
             height: orb.size,
             background: `radial-gradient(circle, ${orb.color} 0%, transparent 70%)`,
-            filter: 'blur(60px)',
+            filter: 'blur(40px)', // Reduced from 60px for better GPU performance
           }}
           animate={{
             x: [0, Math.random() * 200 - 100, Math.random() * 200 - 100, 0],
@@ -74,8 +74,8 @@ export function FloatingOrbs() {
         />
       ))}
 
-      {/* Additional light rays */}
-      {[...Array(8)].map((_, i) => (
+      {/* Additional light rays - Reduced from 8 to 3 for performance */}
+      {[...Array(3)].map((_, i) => (
         <motion.div
           key={`ray-${i}`}
           className="absolute h-1 w-32 bg-gradient-to-r from-transparent via-accent/30 to-transparent"

@@ -22,11 +22,11 @@ export function MatrixRain() {
   const [columns, setColumns] = useState<RainColumn[]>([])
 
   useEffect(() => {
-    const count = 30
+    const count = 10 // Reduced from 30 for performance (67% reduction)
     const result: RainColumn[] = []
 
     for (let i = 0; i < count; i++) {
-      const charCount = Math.floor(Math.random() * 10) + 5
+      const charCount = Math.floor(Math.random() * 6) + 4 // Reduced from 10+5 for performance
       const characters = Array.from({ length: charCount }, () =>
         MATRIX_CHARS.charAt(Math.floor(Math.random() * MATRIX_CHARS.length))
       )

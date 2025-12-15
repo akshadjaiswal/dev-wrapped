@@ -156,7 +156,7 @@ export function SlideContainer({ children, totalSlides = 14 }: SlideContainerPro
 
         {/* Progress Dots */}
         <div
-          className="flex gap-2"
+          className="flex gap-1 sm:gap-2"
           role="tablist"
           aria-label="Slide progress"
         >
@@ -164,9 +164,9 @@ export function SlideContainer({ children, totalSlides = 14 }: SlideContainerPro
             <button
               key={slide}
               onClick={() => goToSlide(slide as SlideNumber)}
-              className={`w-2 h-2 rounded-full transition-all duration-300 ${
+              className={`w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full transition-all duration-300 ${
                 slide === currentSlide
-                  ? 'bg-primary w-8'
+                  ? 'bg-primary w-6 sm:w-8'
                   : 'bg-foreground/30 hover:bg-foreground/50'
               }`}
               aria-label={`Go to slide ${slide}`}

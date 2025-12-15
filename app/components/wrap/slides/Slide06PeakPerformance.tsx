@@ -22,10 +22,10 @@ export function Slide06PeakPerformance({ data }: SlideProps) {
         <FadeInUp>
           <div className="text-center space-y-4">
             <p className="text-2xl text-foreground/80">Most Productive:</p>
-            <h2 className="text-6xl md:text-8xl font-header font-bold text-primary text-glow-primary">
+            <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-8xl font-header font-bold text-primary text-glow-primary">
               {data.most_active_month}
             </h2>
-            <p className="text-3xl text-foreground">
+            <p className="text-xl sm:text-2xl md:text-3xl text-foreground">
               {commitsInPeak} commits that month
             </p>
             <p className="text-xl text-accent">You were unstoppable 🚀</p>
