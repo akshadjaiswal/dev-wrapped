@@ -24,12 +24,12 @@ export function Slide03CodeOutput({ data }: SlideProps) {
           <NumberCounter
             value={data.total_repos}
             duration={2}
-            className="text-8xl md:text-9xl font-header font-bold text-primary"
+            className="text-5xl sm:text-7xl md:text-8xl lg:text-9xl font-header font-bold text-primary"
           />
         </div>
 
         <FadeInUp delay={1}>
-          <p className="text-3xl md:text-4xl font-body text-foreground">
+          <p className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-body text-foreground">
             Repositories
           </p>
         </FadeInUp>

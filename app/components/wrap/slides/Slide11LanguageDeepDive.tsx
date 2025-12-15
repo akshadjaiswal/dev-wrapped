@@ -30,7 +30,7 @@ export function Slide11LanguageDeepDive({ data }: SlideProps) {
                 key={lang.name}
                 className="card-theme p-6 flex items-center gap-6"
               >
-                <div className="text-6xl font-bold text-primary/30">
+                <div className="text-4xl sm:text-5xl md:text-6xl font-bold text-primary/30">
                   {index + 1}
                 </div>
                 <div className="flex-1 space-y-2">

@@ -531,7 +531,7 @@ export function processGitHubDataToWrap(
     year,
 
     total_commits: totalCommits,
-    total_repos: repos.length,
+    total_repos: repositoryCommits?.length || repos.length, // Use repos with commits in year (from GraphQL) when available
     public_repos: user.public_repos,
     new_repos_2024: newRepos,
     total_stars: totalStars,

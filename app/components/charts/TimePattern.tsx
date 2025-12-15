@@ -32,7 +32,7 @@ export function TimePattern({ peakHour, codingTimePreference }: TimePatternProps
   }
 
   return (
-    <div className="relative w-64 h-64 mx-auto">
+    <div className="relative w-48 h-48 sm:w-56 sm:h-56 md:w-64 md:h-64 mx-auto">
       {/* Clock circle */}
       <svg className="w-full h-full" viewBox="0 0 200 200">
         <circle
