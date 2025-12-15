@@ -5,17 +5,25 @@
 
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { ThemeProvider } from '@/components/themes/ThemeProvider'
 import { UsernameInput } from '@/components/shared/UsernameInput'
 import { Code2, Sparkles, Share2, Zap } from 'lucide-react'
 import { trackUsernameEntered } from '@/lib/services/analytics'
+import { useWrapStore } from '@/lib/store/wrap-store'
+import { useNavigationStore } from '@/lib/store/navigation-store'
 
 export default function LandingPage() {
   const router = useRouter()
   const [isSubmitting, setIsSubmitting] = useState(false)
+
+  // Reset all state when returning to home page
+  useEffect(() => {
+    useWrapStore.getState().reset()
+    useNavigationStore.getState().reset()
+  }, [])
 
   const handleSubmit = async (username: string) => {
     setIsSubmitting(true)

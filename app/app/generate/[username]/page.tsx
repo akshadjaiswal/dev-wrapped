@@ -17,6 +17,7 @@ import { Button } from '@/components/ui/button'
 import { useWrapGeneration } from '@/lib/hooks'
 import { useThemeStore } from '@/lib/store/theme-store'
 import { useWrapStore } from '@/lib/store/wrap-store'
+import { useNavigationStore } from '@/lib/store/navigation-store'
 import { THEME_CONFIGS } from '@/lib/types/theme'
 import { trackThemeSelected } from '@/lib/services/analytics'
 import type { ThemeType } from '@/lib/types'
@@ -38,6 +39,9 @@ export default function ThemeSelectionPage() {
 
   useEffect(() => {
     if (username) {
+      // Reset stores when username changes to ensure clean state
+      useWrapStore.getState().reset()
+      useNavigationStore.getState().reset()
       setUsername(username)
     }
   }, [username, setUsername])

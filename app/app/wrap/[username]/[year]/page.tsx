@@ -13,6 +13,7 @@ import { LoadingSpinner } from '@/components/ui/loading-spinner'
 import { Button } from '@/components/ui/button'
 import { useWrapStore } from '@/lib/store/wrap-store'
 import { useThemeStore } from '@/lib/store/theme-store'
+import { useNavigationStore } from '@/lib/store/navigation-store'
 import { useWrap } from '@/lib/hooks/use-wrap'
 import {
   Slide01Opening,
@@ -44,6 +45,11 @@ export default function WrapPage() {
 
   // Fetch wrap data
   const { data, isLoading, error } = useWrap(username, year)
+
+  // Reset navigation to slide 1 when wrap page mounts
+  useEffect(() => {
+    useNavigationStore.getState().reset()
+  }, [])
 
   // Update wrap store when data loads
   useEffect(() => {
