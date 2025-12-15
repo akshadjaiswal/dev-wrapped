@@ -8,6 +8,7 @@
 import React from 'react'
 import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Cell } from 'recharts'
 import { motion } from 'framer-motion'
+import { getCSSVariable } from '@/lib/utils/theme-colors'
 import type { MonthlyActivity as MonthlyActivityData } from '@/lib/types'
 
 interface MonthlyActivityProps {
@@ -16,6 +17,10 @@ interface MonthlyActivityProps {
 }
 
 export function MonthlyActivity({ data, mostActiveMonth }: MonthlyActivityProps) {
+  // Resolve CSS variables to actual RGB colors for Recharts
+  const primaryColor = getCSSVariable('--primary')
+  const accentColor = getCSSVariable('--accent')
+
   return (
     <motion.div
       className="w-full h-64"
@@ -40,7 +45,7 @@ export function MonthlyActivity({ data, mostActiveMonth }: MonthlyActivityProps)
             {data.map((entry, index) => (
               <Cell
                 key={`cell-${index}`}
-                fill={entry.month === mostActiveMonth.slice(0, 3) ? 'rgb(var(--primary))' : 'rgb(var(--accent))'}
+                fill={entry.month === mostActiveMonth.slice(0, 3) ? primaryColor : accentColor}
                 opacity={entry.month === mostActiveMonth.slice(0, 3) ? 1 : 0.6}
               />
             ))}

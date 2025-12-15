@@ -7,6 +7,7 @@
 
 import React from 'react'
 import { motion } from 'framer-motion'
+import { getContributionColor } from '@/lib/utils/theme-colors'
 import type { ContributionDay } from '@/lib/types'
 
 interface ContributionHeatmapProps {
@@ -31,15 +32,9 @@ export function ContributionHeatmap({ data, longestStreak }: ContributionHeatmap
     weeks.push(currentWeek)
   }
 
+  // Use theme color utility to resolve CSS variables to actual RGB values
   const getColor = (level: number) => {
-    const colors = {
-      0: 'rgb(var(--foreground) / 0.05)',
-      1: 'rgb(var(--accent) / 0.3)',
-      2: 'rgb(var(--accent) / 0.5)',
-      3: 'rgb(var(--primary) / 0.7)',
-      4: 'rgb(var(--primary) / 1)',
-    }
-    return colors[level as keyof typeof colors] || colors[0]
+    return getContributionColor(level as 0 | 1 | 2 | 3 | 4)
   }
 
   return (
