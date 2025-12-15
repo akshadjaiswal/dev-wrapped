@@ -74,8 +74,8 @@ export function FloatingOrbs() {
         />
       ))}
 
-      {/* Additional light rays */}
-      {[...Array(3)].map((_, i) => ( {/* Reduced from 8 for performance */}
+      {/* Additional light rays - Reduced from 8 to 3 for performance */}
+      {[...Array(3)].map((_, i) => (
         <motion.div
           key={`ray-${i}`}
           className="absolute h-1 w-32 bg-gradient-to-r from-transparent via-accent/30 to-transparent"

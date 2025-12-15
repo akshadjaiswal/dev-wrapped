@@ -44,13 +44,13 @@ export function ContributionHeatmap({ data, longestStreak }: ContributionHeatmap
 
   return (
     <div className="w-full space-y-4">
-      <div className="flex gap-1 overflow-x-auto pb-4">
+      <div className="flex gap-0.5 sm:gap-1 overflow-x-auto pb-4">
         {weeks.map((week, weekIndex) => (
-          <div key={weekIndex} className="flex flex-col gap-1">
+          <div key={weekIndex} className="flex flex-col gap-0.5 sm:gap-1">
             {week.map((day, dayIndex) => (
               <motion.div
                 key={day.date}
-                className="w-3 h-3 rounded-sm"
+                className="w-2 h-2 sm:w-3 sm:h-3 rounded-sm"
                 style={{ backgroundColor: getColor(day.level) }}
                 initial={{ scale: 0, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
