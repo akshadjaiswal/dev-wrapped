@@ -22,13 +22,13 @@ export function NeonParticles() {
 
   // Generate particles only on client to avoid hydration mismatch
   useEffect(() => {
-    const count = 20
+    const count = 7 // Reduced from 20 for performance (65% reduction)
     const result: Particle[] = []
 
     for (let i = 0; i < count; i++) {
       result.push({
         id: i,
-        size: Math.random() * 60 + 30, // 30-90px
+        size: Math.random() * 30 + 30, // Reduced from 60+30 (30-60px now)
         x: Math.random() * 100, // 0-100%
         y: Math.random() * 100, // 0-100%
         delay: Math.random() * 5,
@@ -51,11 +51,12 @@ export function NeonParticles() {
           }}
           initial={{ opacity: 0, scale: 0 }}
           animate={{
-            opacity: [0, 0.6, 0.4, 0.6, 0],
-            scale: [0, 1, 1, 1, 0],
-            y: [0, -100, -200, -300, -400],
-            x: [0, 30, -20, 40, -30],
-            rotate: [0, 180, 360, 540, 720],
+            // Simplified from 5 to 3 keyframes for performance
+            opacity: [0, 0.6, 0],
+            scale: [0, 1, 0],
+            y: [0, -200, -400],
+            x: [0, 20, -20],
+            rotate: [0, 360, 720],
           }}
           transition={{
             duration: particle.duration,
