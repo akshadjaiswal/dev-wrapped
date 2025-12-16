@@ -19,6 +19,7 @@ export interface WrapData {
   total_repos: number
   public_repos: number
   new_repos_2024: number
+  repos_created_in_year: number // Repositories created in the specified year
   total_stars: number
   total_stars_earned: number // Stars earned this year
   total_forks: number

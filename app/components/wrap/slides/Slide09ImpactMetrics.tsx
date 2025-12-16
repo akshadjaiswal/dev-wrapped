@@ -1,13 +1,13 @@
 /**
  * Slide 9: Impact Metrics
- * Stars, forks, and followers gained
+ * Repositories created, total commits, and languages used in the year
  */
 
 'use client'
 
 import React from 'react'
 import { FadeInUp, NumberCounter } from '@/components/animations'
-import { Star, GitFork, Users } from 'lucide-react'
+import { FolderGit, GitCommit, Code2 } from 'lucide-react'
 import type { SlideProps } from '@/lib/types'
 
 export function Slide09ImpactMetrics({ data }: SlideProps) {
@@ -23,30 +23,30 @@ export function Slide09ImpactMetrics({ data }: SlideProps) {
         <FadeInUp delay={0.3}>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="card-theme p-8 text-center space-y-4">
-              <Star className="h-12 w-12 mx-auto text-accent" />
+              <FolderGit className="h-12 w-12 mx-auto text-accent" />
               <NumberCounter
-                value={data.total_stars_earned}
+                value={data.repos_created_in_year || 0}
                 className="text-5xl font-bold text-primary"
               />
-              <p className="text-lg text-foreground/80">stars earned</p>
+              <p className="text-lg text-foreground/80">repositories created</p>
             </div>
 
             <div className="card-theme p-8 text-center space-y-4">
-              <GitFork className="h-12 w-12 mx-auto text-accent" />
+              <GitCommit className="h-12 w-12 mx-auto text-accent" />
               <NumberCounter
-                value={data.total_forks}
+                value={data.total_commits}
                 className="text-5xl font-bold text-primary"
               />
-              <p className="text-lg text-foreground/80">forks</p>
+              <p className="text-lg text-foreground/80">commits made</p>
             </div>
 
             <div className="card-theme p-8 text-center space-y-4">
-              <Users className="h-12 w-12 mx-auto text-accent" />
+              <Code2 className="h-12 w-12 mx-auto text-accent" />
               <NumberCounter
-                value={data.followers_gained}
+                value={data.languages.length}
                 className="text-5xl font-bold text-primary"
               />
-              <p className="text-lg text-foreground/80">new followers</p>
+              <p className="text-lg text-foreground/80">languages used</p>
             </div>
           </div>
         </FadeInUp>

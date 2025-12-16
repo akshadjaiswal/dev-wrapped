@@ -549,6 +549,13 @@ export function processGitHubDataToWrap(
     ? graphqlCommits
     : calculateTotalCommits(events)
   const newRepos = calculateNewRepos2024(repos)
+
+  // Calculate repos created in the specified year
+  const reposCreatedInYear = repos.filter((repo) => {
+    const createdYear = new Date(repo.created_at).getFullYear()
+    return createdYear === year
+  }).length
+
   const mostActiveMonth = calculateMostActiveMonth(events)
   const longestStreak = graphqlContributions && graphqlContributions.length > 0
     ? calculateLongestStreakFromContributions(graphqlContributions)
@@ -584,6 +591,7 @@ export function processGitHubDataToWrap(
     total_repos: repositoryCommits?.length || repos.length, // Use repos with commits in year (from GraphQL) when available
     public_repos: user.public_repos,
     new_repos_2024: newRepos,
+    repos_created_in_year: reposCreatedInYear, // Repos created in the specified year
     total_stars: totalStars,
     total_stars_earned: totalStars, // Simplified - same as total for now
     total_forks: totalForks,
