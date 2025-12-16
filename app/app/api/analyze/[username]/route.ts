@@ -95,6 +95,14 @@ export async function GET(
       wrapData.total_repos || 0
     )
 
+    console.log('[ANALYZE] Personality analysis input:', {
+      username,
+      commits: wrapData.total_commits,
+      repos: wrapData.total_repos,
+      commitSize,
+      languages: wrapData.languages?.map((l) => l.name),
+    })
+
     const personality = await analyzePersonality({
       commits: wrapData.total_commits || 0,
       primaryLanguage: wrapData.primary_language || 'Unknown',
@@ -106,6 +114,8 @@ export async function GET(
       topRepo: wrapData.top_repo_name || 'Unknown',
       avgCommitSize: commitSize,
     })
+
+    console.log('[ANALYZE] Personality result:', personality)
 
     // Add personality to wrap data
     const completeWrapData = {

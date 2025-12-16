@@ -221,6 +221,40 @@ export function calculateLongestStreak(events: GitHubEvent[]): number {
 }
 
 /**
+ * Calculate longest commit streak from GraphQL contribution data
+ * Uses full year data from GitHub's contribution calendar
+ */
+export function calculateLongestStreakFromContributions(contributions: ContributionDay[]): number {
+  if (contributions.length === 0) return 0
+
+  // Filter days with contributions and sort by date
+  const activeDays = contributions
+    .filter((day) => day.count > 0)
+    .map((day) => parseISO(day.date))
+    .sort((a, b) => a.getTime() - b.getTime())
+
+  if (activeDays.length === 0) return 0
+  if (activeDays.length === 1) return 1
+
+  // Calculate streaks
+  let longestStreak = 1
+  let currentStreak = 1
+
+  for (let i = 1; i < activeDays.length; i++) {
+    const dayDiff = differenceInDays(activeDays[i], activeDays[i - 1])
+
+    if (dayDiff === 1) {
+      currentStreak++
+      longestStreak = Math.max(longestStreak, currentStreak)
+    } else {
+      currentStreak = 1
+    }
+  }
+
+  return longestStreak
+}
+
+/**
  * Generate contribution calendar data
  */
 export function generateContributionData(events: GitHubEvent[]): ContributionDay[] {
@@ -465,7 +499,8 @@ export function calculateCommitsPerDay(totalCommits: number, daysActive: number)
 }
 
 /**
- * Estimate average commit size
+ * Estimate average commit size based on activity patterns
+ * This is a heuristic based on total commit volume and repository spread
  */
 export function estimateCommitSize(
   totalCommits: number,
@@ -475,8 +510,13 @@ export function estimateCommitSize(
 
   const commitsPerRepo = totalCommits / repoCount
 
-  if (commitsPerRepo < 20) return 'small'
-  if (commitsPerRepo < 50) return 'medium'
+  // Adjusted thresholds to better reflect actual developer patterns
+  // Small: Very focused, careful commits (< 50 commits per repo)
+  // Medium: Balanced approach (50-150 commits per repo)
+  // Large: High velocity, shipping fast (> 150 commits per repo)
+
+  if (commitsPerRepo < 50) return 'small'
+  if (commitsPerRepo < 150) return 'medium'
   return 'large'
 }
 
@@ -509,8 +549,17 @@ export function processGitHubDataToWrap(
     ? graphqlCommits
     : calculateTotalCommits(events)
   const newRepos = calculateNewRepos2024(repos)
+
+  // Calculate repos created in the specified year
+  const reposCreatedInYear = repos.filter((repo) => {
+    const createdYear = new Date(repo.created_at).getFullYear()
+    return createdYear === year
+  }).length
+
   const mostActiveMonth = calculateMostActiveMonth(events)
-  const longestStreak = calculateLongestStreak(events)
+  const longestStreak = graphqlContributions && graphqlContributions.length > 0
+    ? calculateLongestStreakFromContributions(graphqlContributions)
+    : calculateLongestStreak(events)
   const { preference: codingTime, peakHour } = calculateCodingTimePreference(events)
   const topRepo = findTopRepository(repos, events, repositoryCommits)
   const collaboration = calculateCollaborationStats(events)
@@ -542,6 +591,7 @@ export function processGitHubDataToWrap(
     total_repos: repositoryCommits?.length || repos.length, // Use repos with commits in year (from GraphQL) when available
     public_repos: user.public_repos,
     new_repos_2024: newRepos,
+    repos_created_in_year: reposCreatedInYear, // Repos created in the specified year
     total_stars: totalStars,
     total_stars_earned: totalStars, // Simplified - same as total for now
     total_forks: totalForks,
