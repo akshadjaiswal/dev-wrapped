@@ -465,7 +465,8 @@ export function calculateCommitsPerDay(totalCommits: number, daysActive: number)
 }
 
 /**
- * Estimate average commit size
+ * Estimate average commit size based on activity patterns
+ * This is a heuristic based on total commit volume and repository spread
  */
 export function estimateCommitSize(
   totalCommits: number,
@@ -475,8 +476,13 @@ export function estimateCommitSize(
 
   const commitsPerRepo = totalCommits / repoCount
 
-  if (commitsPerRepo < 20) return 'small'
-  if (commitsPerRepo < 50) return 'medium'
+  // Adjusted thresholds to better reflect actual developer patterns
+  // Small: Very focused, careful commits (< 50 commits per repo)
+  // Medium: Balanced approach (50-150 commits per repo)
+  // Large: High velocity, shipping fast (> 150 commits per repo)
+
+  if (commitsPerRepo < 50) return 'small'
+  if (commitsPerRepo < 150) return 'medium'
   return 'large'
 }
 

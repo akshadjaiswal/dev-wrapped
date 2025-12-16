@@ -213,6 +213,7 @@ export async function analyzePersonality(stats: {
 
 /**
  * Determine archetype based on stats (rule-based fallback)
+ * Improved with better thresholds and variety
  */
 function determineFallbackArchetype(stats: {
   commits: number
@@ -225,59 +226,140 @@ function determineFallbackArchetype(stats: {
   topRepo: string
   avgCommitSize: string
 }): DeveloperPersonality {
-  // Rule-based logic to determine archetype
-  let archetype = ARCHETYPES.BUILDER
-  let description = 'A dedicated developer who shipped code consistently throughout 2024.'
-  let traits = ['Consistent', 'Focused', 'Productive']
-
-  // Night Coder
-  if (stats.codingTime === 'night') {
-    archetype = ARCHETYPES.NIGHT_CODER
-    description = 'A nocturnal coder who does their best work under the stars.'
-    traits = ['Night Owl', 'Creative', 'Independent']
+  // Helper to pick random variation within a personality type
+  const pickVariation = (variations: Array<{ description: string; traits: string[] }>) => {
+    const index = Math.floor(Math.random() * variations.length)
+    return variations[index]
   }
+
+  // Score different archetypes
+  const scores = {
+    nightCoder: stats.codingTime === 'night' ? 10 : 0,
+    collaborator: (stats.prs > 20 ? 3 : 0) + (stats.issues > 15 ? 3 : 0),
+    explorer: stats.languages.length >= 4 ? stats.languages.length : 0,
+    speedrunner: (stats.avgCommitSize === 'large' ? 5 : 0) + (stats.commits > 800 ? 3 : 0),
+    craftsperson: (stats.avgCommitSize === 'small' ? 4 : 0) + (stats.commits > 400 ? 2 : 0),
+    maintainer: (stats.repoCount < 8 && stats.commits > 200 ? 5 : 0),
+    builder: stats.repoCount > 10 ? 3 : 0,
+  }
+
+  // Night Coder (highest priority if coding at night)
+  if (scores.nightCoder >= 10) {
+    const variations = [
+      {
+        description: 'A nocturnal coder who does their best work under the stars.',
+        traits: ['Night Owl', 'Creative', 'Independent'],
+      },
+      {
+        description: 'Late night commits and moonlit debugging sessions define your 2024.',
+        traits: ['Nocturnal', 'Focused', 'Creative'],
+      },
+    ]
+    const variation = pickVariation(variations)
+    return { archetype: ARCHETYPES.NIGHT_CODER, ...variation }
+  }
+
+  // Find the highest scoring archetype
+  const maxScore = Math.max(...Object.values(scores))
+  const topArchetype = Object.entries(scores).find(([_, score]) => score === maxScore)?.[0]
+
   // Collaborator
-  else if (stats.prs > 50 || stats.issues > 30) {
-    archetype = ARCHETYPES.COLLABORATOR
-    description = 'A team player who thrives on collaboration and community engagement.'
-    traits = ['Collaborative', 'Communicative', 'Helpful']
-  }
-  // Explorer
-  else if (stats.languages.length >= 5) {
-    archetype = ARCHETYPES.EXPLORER
-    description = 'A curious polyglot always exploring new technologies and languages.'
-    traits = ['Curious', 'Adaptable', 'Versatile']
-  }
-  // Speedrunner
-  else if (stats.avgCommitSize === 'large' && stats.commits > 1000) {
-    archetype = ARCHETYPES.SPEEDRUNNER
-    description = 'A fast-paced developer who ships code quickly and efficiently.'
-    traits = ['Fast', 'Decisive', 'Action-oriented']
-  }
-  // Craftsperson
-  else if (stats.avgCommitSize === 'small' && stats.commits > 500) {
-    archetype = ARCHETYPES.CRAFTSPERSON
-    description = 'A meticulous developer who values quality and careful craftsmanship.'
-    traits = ['Careful', 'Detail-oriented', 'Thoughtful']
-  }
-  // Maintainer
-  else if (stats.commits > 300 && stats.repoCount < 10) {
-    archetype = ARCHETYPES.MAINTAINER
-    description = 'A reliable maintainer providing steady, consistent contributions.'
-    traits = ['Reliable', 'Steady', 'Dependable']
-  }
-  // Builder (default)
-  else {
-    archetype = ARCHETYPES.BUILDER
-    description = 'A focused builder who creates meaningful projects with dedication.'
-    traits = ['Focused', 'Dedicated', 'Persistent']
+  if (topArchetype === 'collaborator' && scores.collaborator >= 3) {
+    const variations = [
+      {
+        description: 'A team player who thrives on collaboration and community engagement.',
+        traits: ['Collaborative', 'Communicative', 'Helpful'],
+      },
+      {
+        description: 'Building bridges and merging PRs, you made 2024 a team effort.',
+        traits: ['Team-oriented', 'Supportive', 'Engaging'],
+      },
+    ]
+    const variation = pickVariation(variations)
+    return { archetype: ARCHETYPES.COLLABORATOR, ...variation }
   }
 
-  return {
-    archetype,
-    description,
-    traits,
+  // Explorer
+  if (topArchetype === 'explorer' && scores.explorer >= 4) {
+    const variations = [
+      {
+        description: 'A curious polyglot always exploring new technologies and languages.',
+        traits: ['Curious', 'Adaptable', 'Versatile'],
+      },
+      {
+        description: `Mastered ${stats.languages.length} languages this year, always learning something new.`,
+        traits: ['Polyglot', 'Curious', 'Adventurous'],
+      },
+    ]
+    const variation = pickVariation(variations)
+    return { archetype: ARCHETYPES.EXPLORER, ...variation }
   }
+
+  // Speedrunner
+  if (topArchetype === 'speedrunner' && scores.speedrunner >= 5) {
+    const variations = [
+      {
+        description: 'A fast-paced developer who ships code quickly and efficiently.',
+        traits: ['Fast', 'Decisive', 'Action-oriented'],
+      },
+      {
+        description: 'High velocity commits and rapid iteration defined your productive 2024.',
+        traits: ['Rapid', 'Efficient', 'Prolific'],
+      },
+    ]
+    const variation = pickVariation(variations)
+    return { archetype: ARCHETYPES.SPEEDRUNNER, ...variation }
+  }
+
+  // Craftsperson
+  if (topArchetype === 'craftsperson' && scores.craftsperson >= 4) {
+    const variations = [
+      {
+        description: 'A meticulous developer who values quality and careful craftsmanship.',
+        traits: ['Careful', 'Detail-oriented', 'Thoughtful'],
+      },
+      {
+        description: 'Every commit polished to perfection, quality over quantity in 2024.',
+        traits: ['Precise', 'Meticulous', 'Quality-focused'],
+      },
+    ]
+    const variation = pickVariation(variations)
+    return { archetype: ARCHETYPES.CRAFTSPERSON, ...variation }
+  }
+
+  // Maintainer
+  if (topArchetype === 'maintainer' && scores.maintainer >= 5) {
+    const variations = [
+      {
+        description: 'A reliable maintainer providing steady, consistent contributions.',
+        traits: ['Reliable', 'Steady', 'Dependable'],
+      },
+      {
+        description: 'Deep focus and consistent care kept projects thriving all year long.',
+        traits: ['Dependable', 'Committed', 'Thorough'],
+      },
+    ]
+    const variation = pickVariation(variations)
+    return { archetype: ARCHETYPES.MAINTAINER, ...variation }
+  }
+
+  // Builder (default with variations)
+  const builderVariations = [
+    {
+      description: 'A focused builder who creates meaningful projects with dedication.',
+      traits: ['Focused', 'Dedicated', 'Persistent'],
+    },
+    {
+      description: 'Turning ideas into reality one commit at a time throughout 2024.',
+      traits: ['Creative', 'Determined', 'Productive'],
+    },
+    {
+      description: 'A dedicated developer who shipped code consistently throughout 2024.',
+      traits: ['Consistent', 'Reliable', 'Productive'],
+    },
+  ]
+  const variation = pickVariation(builderVariations)
+  return { archetype: ARCHETYPES.BUILDER, ...variation }
 }
 
 /**
