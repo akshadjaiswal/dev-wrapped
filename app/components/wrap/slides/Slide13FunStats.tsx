@@ -28,13 +28,13 @@ export function Slide13FunStats({ data }: SlideProps) {
         </FadeInUp>
 
         <FadeInUp delay={0.3}>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="card-theme p-6 flex items-center gap-4">
-              <Coffee className="h-12 w-12 text-accent flex-shrink-0" />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
+            <div className="card-theme p-4 md:p-6 flex items-center gap-4">
+              <Coffee className="h-10 w-10 md:h-12 md:w-12 text-accent flex-shrink-0" />
               <div>
                 <NumberCounter
                   value={coffeeEquivalent}
-                  className="text-3xl font-bold text-foreground"
+                  className="text-xl md:text-3xl font-bold text-foreground"
                 />
                 <p className="text-sm text-foreground/60">
                   cups of coffee worth of code
@@ -42,12 +42,12 @@ export function Slide13FunStats({ data }: SlideProps) {
               </div>
             </div>
 
-            <div className="card-theme p-6 flex items-center gap-4">
-              <Zap className="h-12 w-12 text-accent flex-shrink-0" />
+            <div className="card-theme p-4 md:p-6 flex items-center gap-4">
+              <Zap className="h-10 w-10 md:h-12 md:w-12 text-accent flex-shrink-0" />
               <div>
                 <NumberCounter
                   value={averageCommitsPerDay}
-                  className="text-3xl font-bold text-foreground"
+                  className="text-xl md:text-3xl font-bold text-foreground"
                 />
                 <p className="text-sm text-foreground/60">
                   commits per day on average
@@ -55,12 +55,12 @@ export function Slide13FunStats({ data }: SlideProps) {
               </div>
             </div>
 
-            <div className="card-theme p-6 flex items-center gap-4">
-              <Calendar className="h-12 w-12 text-accent flex-shrink-0" />
+            <div className="card-theme p-4 md:p-6 flex items-center gap-4">
+              <Calendar className="h-10 w-10 md:h-12 md:w-12 text-accent flex-shrink-0" />
               <div>
                 <NumberCounter
                   value={data.days_active}
-                  className="text-3xl font-bold text-foreground"
+                  className="text-xl md:text-3xl font-bold text-foreground"
                 />
                 <p className="text-sm text-foreground/60">
                   days you shipped code
@@ -68,12 +68,12 @@ export function Slide13FunStats({ data }: SlideProps) {
               </div>
             </div>
 
-            <div className="card-theme p-6 flex items-center gap-4">
-              <TrendingUp className="h-12 w-12 text-accent flex-shrink-0" />
+            <div className="card-theme p-4 md:p-6 flex items-center gap-4">
+              <TrendingUp className="h-10 w-10 md:h-12 md:w-12 text-accent flex-shrink-0" />
               <div>
                 <NumberCounter
                   value={productivePercentage}
-                  className="text-3xl font-bold text-foreground"
+                  className="text-xl md:text-3xl font-bold text-foreground"
                 />
                 <p className="text-sm text-foreground/60">
                   of the year you were productive
@@ -84,11 +84,11 @@ export function Slide13FunStats({ data }: SlideProps) {
         </FadeInUp>
 
         <FadeInUp delay={0.8}>
-          <div className="card-theme p-8 text-center space-y-4">
-            <p className="text-2xl text-foreground">
+          <div className="card-theme p-6 md:p-8 text-center space-y-4">
+            <p className="text-lg md:text-2xl text-foreground">
               If coding were an Olympic sport...
             </p>
-            <p className="text-4xl font-header font-bold text-primary">
+            <p className="text-2xl md:text-4xl font-header font-bold text-primary">
               {data.longest_streak >= 30
                 ? "You'd take home the gold 🥇"
                 : data.longest_streak >= 14
