@@ -221,6 +221,40 @@ export function calculateLongestStreak(events: GitHubEvent[]): number {
 }
 
 /**
+ * Calculate longest commit streak from GraphQL contribution data
+ * Uses full year data from GitHub's contribution calendar
+ */
+export function calculateLongestStreakFromContributions(contributions: ContributionDay[]): number {
+  if (contributions.length === 0) return 0
+
+  // Filter days with contributions and sort by date
+  const activeDays = contributions
+    .filter((day) => day.count > 0)
+    .map((day) => parseISO(day.date))
+    .sort((a, b) => a.getTime() - b.getTime())
+
+  if (activeDays.length === 0) return 0
+  if (activeDays.length === 1) return 1
+
+  // Calculate streaks
+  let longestStreak = 1
+  let currentStreak = 1
+
+  for (let i = 1; i < activeDays.length; i++) {
+    const dayDiff = differenceInDays(activeDays[i], activeDays[i - 1])
+
+    if (dayDiff === 1) {
+      currentStreak++
+      longestStreak = Math.max(longestStreak, currentStreak)
+    } else {
+      currentStreak = 1
+    }
+  }
+
+  return longestStreak
+}
+
+/**
  * Generate contribution calendar data
  */
 export function generateContributionData(events: GitHubEvent[]): ContributionDay[] {
@@ -516,7 +550,9 @@ export function processGitHubDataToWrap(
     : calculateTotalCommits(events)
   const newRepos = calculateNewRepos2024(repos)
   const mostActiveMonth = calculateMostActiveMonth(events)
-  const longestStreak = calculateLongestStreak(events)
+  const longestStreak = graphqlContributions && graphqlContributions.length > 0
+    ? calculateLongestStreakFromContributions(graphqlContributions)
+    : calculateLongestStreak(events)
   const { preference: codingTime, peakHour } = calculateCodingTimePreference(events)
   const topRepo = findTopRepository(repos, events, repositoryCommits)
   const collaboration = calculateCollaborationStats(events)

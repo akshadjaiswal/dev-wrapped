@@ -124,7 +124,7 @@ export function Slide14ShareCard({ data, theme }: SlideProps) {
 
               <div className="pt-4">
                 <p className="text-sm text-foreground/40">
-                  devwrapped.com
+                  dev-wrapped.vercel.app
                 </p>
               </div>
             </div>
