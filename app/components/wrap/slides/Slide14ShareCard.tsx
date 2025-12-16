@@ -21,7 +21,10 @@ export function Slide14ShareCard({ data, theme }: SlideProps) {
   const shareText = `Check out my ${data.year} DevWrapped! 🚀 ${data.total_commits} commits, ${data.languages.length} languages, and ${data.longest_streak} day streak.`
 
   const handleDownload = async () => {
-    if (!cardRef.current) return
+    if (!cardRef.current) {
+      console.error('Card element not found')
+      return
+    }
     setIsGenerating(true)
 
     try {
@@ -29,14 +32,25 @@ export function Slide14ShareCard({ data, theme }: SlideProps) {
         backgroundColor: null,
         scale: 2,
         logging: false,
+        allowTaint: true,              // Allow cross-origin images
+        useCORS: true,                 // Attempt CORS loading
+        imageTimeout: 15000,           // 15 second timeout for images
       })
+
+      // Validate canvas
+      if (!canvas || canvas.width === 0 || canvas.height === 0) {
+        throw new Error('Canvas generation failed - empty result')
+      }
 
       const link = document.createElement('a')
       link.download = `devwrapped-${data.username}-${data.year}.png`
       link.href = canvas.toDataURL('image/png')
       link.click()
+
+      console.log('✅ Card downloaded successfully')
     } catch (error) {
       console.error('Failed to generate image:', error)
+      alert('Failed to download card. Please try again.')
     } finally {
       setIsGenerating(false)
     }
