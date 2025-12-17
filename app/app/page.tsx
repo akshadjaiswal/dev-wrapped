@@ -53,7 +53,7 @@ export default function LandingPage() {
           </motion.div>
 
           <motion.a
-            href="https://github.com"
+            href="https://github.com/akshadjaiswal/dev-wrapped"
             target="_blank"
             rel="noopener noreferrer"
             className="text-foreground/60 hover:text-foreground transition-colors text-sm font-body"
@@ -142,17 +142,44 @@ export default function LandingPage() {
 
         {/* Footer */}
         <footer className="w-full py-6 px-6 text-center border-t border-theme">
-          <motion.p
-            className="text-foreground/50 font-body text-sm"
+          <motion.div
+            className="flex flex-col items-center gap-2"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 1 }}
           >
-            Built with{' '}
-            <span className="text-primary">Next.js</span>,{' '}
-            <span className="text-secondary">Supabase</span>, and{' '}
-            <span className="text-accent">Framer Motion</span>
-          </motion.p>
+            <p className="text-foreground/50 font-body text-sm">
+              Built by <span className="text-primary font-semibold">akshad</span>
+            </p>
+            <div className="flex items-center gap-4 text-foreground/40 font-body text-xs">
+              <a
+                href="https://github.com/akshadjaiswal"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-primary transition-colors"
+              >
+                GitHub: akshadjaiswal
+              </a>
+              <span>•</span>
+              <a
+                href="https://x.com/akshad_999"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-primary transition-colors"
+              >
+                X: @akshad_999
+              </a>
+              <span>•</span>
+              <a
+                href="https://linkedin.com/in/akshadsantoshjaiswal"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-primary transition-colors"
+              >
+                LinkedIn
+              </a>
+            </div>
+          </motion.div>
         </footer>
       </main>
     </ThemeProvider>

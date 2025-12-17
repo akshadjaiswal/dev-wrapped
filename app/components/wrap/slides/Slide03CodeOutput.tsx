@@ -38,7 +38,7 @@ export function Slide03CodeOutput({ data }: SlideProps) {
           <div className="flex items-center justify-center gap-3">
             <Code2 className="h-8 w-8 text-accent" />
             <p className="text-xl text-foreground/80">
-              <span className="text-accent font-semibold">{data.new_repos_2024}</span> were brand new in 2025
+              <span className="text-accent font-semibold">{data.repos_created_in_year}</span> were brand new in {data.year}
             </p>
           </div>
         </FadeInUp>

@@ -552,7 +552,8 @@ export function processGitHubDataToWrap(
 
   // Calculate repos created in the specified year
   const reposCreatedInYear = repos.filter((repo) => {
-    const createdYear = new Date(repo.created_at).getFullYear()
+    const createdAt = parseISO(repo.created_at)
+    const createdYear = createdAt.getFullYear()
     return createdYear === year
   }).length
 
