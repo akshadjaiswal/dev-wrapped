@@ -14,7 +14,7 @@
 
 *Experience your GitHub activity like never before - beautiful animations, AI-powered insights, and shareable year-in-review*
 
-[🚀 Try Demo](https://dev-wrapped.vercel.app) • [📖 Docs](./my_docs) • [🐛 Report Bug](https://github.com/akshadjaiswal/dev-wrapped/issues)
+[🚀 Try Demo](https://dev-wrapped.vercel.app) • [🐛 Report Bug](https://github.com/akshadjaiswal/dev-wrapped/issues)
 
 </div>
 
@@ -132,28 +132,6 @@ SUPABASE_SERVICE_ROLE_KEY=eyJxxx...    # SECRET - server only!
 
 # Groq AI (from https://console.groq.com/keys)
 GROQ_API_KEY=gsk_xxxxxxxxxxxxx
-```
-
-### Database Setup
-
-```bash
-# Run migrations in Supabase SQL Editor
-# See: my_docs/SETUP.md for full schema
-
-CREATE TABLE github_wraps (
-  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  username TEXT NOT NULL,
-  year INTEGER NOT NULL,
-  wrap_data JSONB NOT NULL,
-  created_at TIMESTAMPTZ DEFAULT NOW(),
-  UNIQUE(username, year)
-);
-
--- Enable RLS
-ALTER TABLE github_wraps ENABLE ROW LEVEL SECURITY;
-
--- Public read policy
-CREATE POLICY "Allow public read" ON github_wraps FOR SELECT USING (true);
 ```
 
 ### Run Development Server
