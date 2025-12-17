@@ -7,16 +7,16 @@ const inter = Inter({ subsets: ['latin'], weight: ['300', '400', '500', '600', '
 
 export const metadata: Metadata = {
   title: 'DevWrapped - Your Code Year, Visualized',
-  description: 'See your 2024 GitHub journey as a stunning story. Free. No sign-up. 30 seconds.',
+  description: 'See your 2025 GitHub journey as a stunning story. Free. No sign-up. 30 seconds.',
   openGraph: {
     title: 'DevWrapped - Your Code Year, Visualized',
-    description: 'See your 2024 GitHub journey as a stunning story.',
+    description: 'See your 2025 GitHub journey as a stunning story.',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
     title: 'DevWrapped - Your Code Year, Visualized',
-    description: 'See your 2024 GitHub journey as a stunning story.',
+    description: 'See your 2025 GitHub journey as a stunning story.',
   },
 }
 
