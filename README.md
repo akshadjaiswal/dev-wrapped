@@ -186,49 +186,6 @@ app/
 
 ---
 
-## 🎨 Customization
-
-### Add a New Theme
-
-See: `lib/types/theme.ts` and `components/wrap/ThemeProvider.tsx`
-
-```typescript
-// 1. Define theme in lib/types/theme.ts
-export const THEMES = {
-  custom: {
-    name: 'Custom',
-    gradient: 'from-pink-500 to-purple-500',
-    particleColor: '#ff69b4'
-  }
-}
-
-// 2. Add particle component in components/wrap/particles/
-// 3. Update ThemeProvider.tsx to include new particles
-```
-
-### Add a New Slide
-
-See: `components/wrap/slides/` and `my_docs/COMPONENTS.md`
-
-```bash
-# 1. Create new slide component
-components/wrap/slides/NewSlide.tsx
-
-# 2. Add to WrapDisplay.tsx
-<SlideContainer totalSlides={15}>  # Increment count
-  {/* ... existing slides */}
-  <NewSlide data={wrapData} />
-</SlideContainer>
-
-# 3. Update navigation in lib/store/navigation.ts
-```
-
-### Modify AI Personality Prompt
-
-See: `lib/services/groq.ts` line 30-80
-
----
-
 ## 🗺️ Roadmap
 
 - [ ] **Comparison Mode** - Compare two users side-by-side
