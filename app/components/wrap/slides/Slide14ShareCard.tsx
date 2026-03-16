@@ -6,6 +6,7 @@
 'use client'
 
 import React, { useRef, useState } from 'react'
+import Image from 'next/image'
 import { FadeInUp } from '@/components/animations'
 import { Button } from '@/components/ui/button'
 import { Download, Twitter, Linkedin, Link as LinkIcon, Check } from 'lucide-react'
@@ -16,6 +17,7 @@ export function Slide14ShareCard({ data, theme }: SlideProps) {
   const cardRef = useRef<HTMLDivElement>(null)
   const [isGenerating, setIsGenerating] = useState(false)
   const [copySuccess, setCopySuccess] = useState(false)
+  const [downloadError, setDownloadError] = useState<string>()
 
   const shareUrl = `${typeof window !== 'undefined' ? window.location.origin : ''}/wrap/${data.username}/${data.year}`
   const shareText = `Check out my ${data.year} DevWrapped! 🚀 ${data.total_commits} commits, ${data.languages.length} languages, and ${data.longest_streak} day streak.`
@@ -47,10 +49,10 @@ export function Slide14ShareCard({ data, theme }: SlideProps) {
       link.href = canvas.toDataURL('image/png')
       link.click()
 
-      console.log('✅ Card downloaded successfully')
     } catch (error) {
       console.error('Failed to generate image:', error)
-      alert('Failed to download card. Please try again.')
+      setDownloadError('Failed to download card. Please try again.')
+      setTimeout(() => setDownloadError(undefined), 4000)
     } finally {
       setIsGenerating(false)
     }
@@ -102,10 +104,13 @@ export function Slide14ShareCard({ data, theme }: SlideProps) {
               </div>
 
               <div className="flex flex-col md:flex-row items-center justify-center gap-3 md:gap-4">
-                <img
+                <Image
                   src={data.avatar_url}
-                  alt={data.username}
-                  className="w-16 h-16 md:w-20 md:h-20 rounded-full border-4 border-primary"
+                  alt={`GitHub avatar of ${data.display_name || data.username}`}
+                  width={80}
+                  height={80}
+                  className="rounded-full border-4 border-primary"
+                  unoptimized
                 />
                 <div className="text-center md:text-left">
                   <p className="text-xl md:text-2xl font-bold text-foreground">
@@ -193,6 +198,11 @@ export function Slide14ShareCard({ data, theme }: SlideProps) {
               )}
             </Button>
           </div>
+          {downloadError && (
+            <p role="alert" aria-live="assertive" className="text-red-400 text-sm text-center mt-2">
+              {downloadError}
+            </p>
+          )}
         </FadeInUp>
 
         <FadeInUp delay={1.2}>

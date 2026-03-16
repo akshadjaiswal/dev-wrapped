@@ -6,7 +6,7 @@
 'use client'
 
 import React, { useEffect, useCallback } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import { ChevronLeft, ChevronRight, Play, Pause, Home } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useNavigationStore } from '@/lib/store/navigation-store'
@@ -21,6 +21,7 @@ interface SlideContainerProps {
 
 export function SlideContainer({ children, totalSlides = 14 }: SlideContainerProps) {
   const router = useRouter()
+  const reducedMotion = useReducedMotion()
   const {
     currentSlide,
     direction,
@@ -73,8 +74,8 @@ export function SlideContainer({ children, totalSlides = 14 }: SlideContainerPro
 
   // Swipe gesture support
   useSwipeGesture({
-    onSwipeLeft: nextSlide,
-    onSwipeRight: prevSlide,
+    onSwipeLeft: () => { setAutoPlay(false); nextSlide() },
+    onSwipeRight: () => { setAutoPlay(false); prevSlide() },
     threshold: 50,
   })
 
@@ -95,7 +96,7 @@ export function SlideContainer({ children, totalSlides = 14 }: SlideContainerPro
 
   const slideVariants = {
     enter: (direction: 'forward' | 'backward') => ({
-      x: direction === 'forward' ? 1000 : -1000,
+      x: reducedMotion ? 0 : direction === 'forward' ? 1000 : -1000,
       opacity: 0,
     }),
     center: {
@@ -103,14 +104,14 @@ export function SlideContainer({ children, totalSlides = 14 }: SlideContainerPro
       opacity: 1,
     },
     exit: (direction: 'forward' | 'backward') => ({
-      x: direction === 'forward' ? -1000 : 1000,
+      x: reducedMotion ? 0 : direction === 'forward' ? -1000 : 1000,
       opacity: 0,
     }),
   }
 
   return (
     <div
-      className="relative w-full h-screen overflow-hidden"
+      className="relative w-full h-dvh overflow-hidden"
       role="region"
       aria-label="Slide presentation"
       aria-live="polite"
@@ -145,7 +146,7 @@ export function SlideContainer({ children, totalSlides = 14 }: SlideContainerPro
         <Button
           variant="outline"
           size="icon"
-          onClick={prevSlide}
+          onClick={() => { setAutoPlay(false); prevSlide() }}
           disabled={currentSlide === 1}
           aria-label="Previous slide"
           aria-keyshortcuts="ArrowLeft"
@@ -163,8 +164,8 @@ export function SlideContainer({ children, totalSlides = 14 }: SlideContainerPro
           {Array.from({ length: totalSlides }, (_, i) => i + 1).map((slide) => (
             <button
               key={slide}
-              onClick={() => goToSlide(slide as SlideNumber)}
-              className={`w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full transition-all duration-300 ${
+              onClick={() => { setAutoPlay(false); goToSlide(slide as SlideNumber) }}
+              className={`w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background ${
                 slide === currentSlide
                   ? 'bg-primary w-6 sm:w-8'
                   : 'bg-foreground/30 hover:bg-foreground/50'
@@ -176,11 +177,16 @@ export function SlideContainer({ children, totalSlides = 14 }: SlideContainerPro
           ))}
         </div>
 
+        {/* Slide Counter */}
+        <span className="font-body text-xs text-foreground/50 tabular-nums min-w-[3rem] text-center select-none">
+          {currentSlide} / {totalSlides}
+        </span>
+
         {/* Next Button */}
         <Button
           variant="outline"
           size="icon"
-          onClick={nextSlide}
+          onClick={() => { setAutoPlay(false); nextSlide() }}
           disabled={currentSlide === totalSlides}
           aria-label="Next slide"
           aria-keyshortcuts="ArrowRight Space"

@@ -4,6 +4,7 @@
  */
 
 import { create } from 'zustand'
+import { persist } from 'zustand/middleware'
 import type { SlideNumber } from '@/lib/types'
 
 interface NavigationStore {
@@ -22,54 +23,62 @@ interface NavigationStore {
   reset: () => void
 }
 
-export const useNavigationStore = create<NavigationStore>((set, get) => ({
-  // Initial state
-  currentSlide: 1,
-  totalSlides: 14,
-  isAutoPlaying: false,
-  direction: 'forward',
-
-  // Actions
-  nextSlide: () => {
-    const { currentSlide, totalSlides } = get()
-    if (currentSlide < totalSlides) {
-      set({
-        currentSlide: (currentSlide + 1) as SlideNumber,
-        direction: 'forward',
-      })
-    }
-  },
-
-  prevSlide: () => {
-    const { currentSlide } = get()
-    if (currentSlide > 1) {
-      set({
-        currentSlide: (currentSlide - 1) as SlideNumber,
-        direction: 'backward',
-      })
-    }
-  },
-
-  goToSlide: (slide) => {
-    const { currentSlide } = get()
-    set({
-      currentSlide: slide,
-      direction: slide > currentSlide ? 'forward' : 'backward',
-    })
-  },
-
-  toggleAutoPlay: () => {
-    set((state) => ({ isAutoPlaying: !state.isAutoPlaying }))
-  },
-
-  setAutoPlay: (isPlaying) => {
-    set({ isAutoPlaying: isPlaying })
-  },
-
-  reset: () =>
-    set({
+export const useNavigationStore = create<NavigationStore>()(
+  persist(
+    (set, get) => ({
+      // Initial state
       currentSlide: 1,
+      totalSlides: 14,
       isAutoPlaying: false,
       direction: 'forward',
+
+      // Actions
+      nextSlide: () => {
+        const { currentSlide, totalSlides } = get()
+        if (currentSlide < totalSlides) {
+          set({
+            currentSlide: (currentSlide + 1) as SlideNumber,
+            direction: 'forward',
+          })
+        }
+      },
+
+      prevSlide: () => {
+        const { currentSlide } = get()
+        if (currentSlide > 1) {
+          set({
+            currentSlide: (currentSlide - 1) as SlideNumber,
+            direction: 'backward',
+          })
+        }
+      },
+
+      goToSlide: (slide) => {
+        const { currentSlide } = get()
+        set({
+          currentSlide: slide,
+          direction: slide > currentSlide ? 'forward' : 'backward',
+        })
+      },
+
+      toggleAutoPlay: () => {
+        set((state) => ({ isAutoPlaying: !state.isAutoPlaying }))
+      },
+
+      setAutoPlay: (isPlaying) => {
+        set({ isAutoPlaying: isPlaying })
+      },
+
+      reset: () =>
+        set({
+          currentSlide: 1,
+          isAutoPlaying: false,
+          direction: 'forward',
+        }),
     }),
-}))
+    {
+      name: 'devwrapped-navigation',
+      partialize: (state) => ({ currentSlide: state.currentSlide }),
+    }
+  )
+)

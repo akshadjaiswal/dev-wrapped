@@ -7,32 +7,33 @@
 'use client'
 
 import React, { useEffect } from 'react'
+import dynamic from 'next/dynamic'
 import { useParams, useRouter } from 'next/navigation'
 import { SlideContainer } from '@/components/wrap/SlideContainer'
 import { LoadingSpinner } from '@/components/ui/loading-spinner'
 import { Button } from '@/components/ui/button'
 import { useWrapStore } from '@/lib/store/wrap-store'
 import { useThemeStore } from '@/lib/store/theme-store'
-import { useNavigationStore } from '@/lib/store/navigation-store'
 import { useWrap } from '@/lib/hooks/use-wrap'
-import {
-  Slide01Opening,
-  Slide02BigNumber,
-  Slide03CodeOutput,
-  Slide04LanguageMastery,
-  Slide05ContributionHeatmap,
-  Slide06PeakPerformance,
-  Slide07TimePatterns,
-  Slide08BabyProject,
-  Slide09ImpactMetrics,
-  Slide10Collaboration,
-  Slide11LanguageDeepDive,
-  Slide12Personality,
-  Slide13FunStats,
-  Slide14ShareCard,
-} from '@/components/wrap/slides'
 import { ThemeBackground } from '@/components/themes/ThemeBackground'
 import { Home } from 'lucide-react'
+
+const slideLoader = () => <div className="slide-container" />
+
+const Slide01Opening = dynamic(() => import('@/components/wrap/slides/Slide01Opening').then(m => m.Slide01Opening), { loading: slideLoader })
+const Slide02BigNumber = dynamic(() => import('@/components/wrap/slides/Slide02BigNumber').then(m => m.Slide02BigNumber), { loading: slideLoader })
+const Slide03CodeOutput = dynamic(() => import('@/components/wrap/slides/Slide03CodeOutput').then(m => m.Slide03CodeOutput), { loading: slideLoader })
+const Slide04LanguageMastery = dynamic(() => import('@/components/wrap/slides/Slide04LanguageMastery').then(m => m.Slide04LanguageMastery), { loading: slideLoader, ssr: false })
+const Slide05ContributionHeatmap = dynamic(() => import('@/components/wrap/slides/Slide05ContributionHeatmap').then(m => m.Slide05ContributionHeatmap), { loading: slideLoader, ssr: false })
+const Slide06PeakPerformance = dynamic(() => import('@/components/wrap/slides/Slide06PeakPerformance').then(m => m.Slide06PeakPerformance), { loading: slideLoader })
+const Slide07TimePatterns = dynamic(() => import('@/components/wrap/slides/Slide07TimePatterns').then(m => m.Slide07TimePatterns), { loading: slideLoader, ssr: false })
+const Slide08BabyProject = dynamic(() => import('@/components/wrap/slides/Slide08BabyProject').then(m => m.Slide08BabyProject), { loading: slideLoader })
+const Slide09ImpactMetrics = dynamic(() => import('@/components/wrap/slides/Slide09ImpactMetrics').then(m => m.Slide09ImpactMetrics), { loading: slideLoader })
+const Slide10Collaboration = dynamic(() => import('@/components/wrap/slides/Slide10Collaboration').then(m => m.Slide10Collaboration), { loading: slideLoader })
+const Slide11LanguageDeepDive = dynamic(() => import('@/components/wrap/slides/Slide11LanguageDeepDive').then(m => m.Slide11LanguageDeepDive), { loading: slideLoader, ssr: false })
+const Slide12Personality = dynamic(() => import('@/components/wrap/slides/Slide12Personality').then(m => m.Slide12Personality), { loading: slideLoader })
+const Slide13FunStats = dynamic(() => import('@/components/wrap/slides/Slide13FunStats').then(m => m.Slide13FunStats), { loading: slideLoader })
+const Slide14ShareCard = dynamic(() => import('@/components/wrap/slides/Slide14ShareCard').then(m => m.Slide14ShareCard), { loading: slideLoader })
 
 export default function WrapPage() {
   const params = useParams()
@@ -45,11 +46,6 @@ export default function WrapPage() {
 
   // Fetch wrap data
   const { data, isLoading, error } = useWrap(username, year)
-
-  // Reset navigation to slide 1 when wrap page mounts
-  useEffect(() => {
-    useNavigationStore.getState().reset()
-  }, [])
 
   // Update wrap store when data loads
   useEffect(() => {

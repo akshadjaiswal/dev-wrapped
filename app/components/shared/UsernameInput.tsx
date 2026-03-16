@@ -45,8 +45,15 @@ export function UsernameInput({
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value
-    setUsername(value)
+    let cleaned = e.target.value.trim()
+    const prefixes = ['https://github.com/', 'http://github.com/', 'github.com/', 'www.github.com/']
+    for (const prefix of prefixes) {
+      if (cleaned.toLowerCase().startsWith(prefix)) {
+        cleaned = cleaned.slice(prefix.length).split('/')[0]
+        break
+      }
+    }
+    setUsername(cleaned)
     if (error) {
       setError(undefined)
     }
@@ -54,10 +61,12 @@ export function UsernameInput({
 
   return (
     <form onSubmit={handleSubmit} className="w-full max-w-xl space-y-4">
+      <label htmlFor="github-username-input" className="sr-only">GitHub Username</label>
       <div className="flex flex-col sm:flex-row gap-3">
         <div className="relative flex-1">
           <Github className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-foreground/50" />
           <Input
+            id="github-username-input"
             type="text"
             placeholder={placeholder}
             value={username}
@@ -81,7 +90,7 @@ export function UsernameInput({
         </Button>
       </div>
       <p className="text-sm text-foreground/60 text-center sm:text-left">
-        Enter your GitHub username to see your 2024 wrap
+        Enter your GitHub username to see your 2025 wrap
       </p>
     </form>
   )

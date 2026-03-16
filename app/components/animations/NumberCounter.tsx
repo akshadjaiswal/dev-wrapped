@@ -6,7 +6,7 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
-import { motion, useSpring, useTransform } from 'framer-motion'
+import { motion, useSpring, useTransform, useReducedMotion } from 'framer-motion'
 
 interface NumberCounterProps {
   value: number
@@ -17,8 +17,13 @@ interface NumberCounterProps {
 
 export function NumberCounter({ value, duration = 2, className, decimals = 0 }: NumberCounterProps) {
   const [displayValue, setDisplayValue] = useState(0)
+  const reducedMotion = useReducedMotion()
 
   useEffect(() => {
+    if (reducedMotion) {
+      setDisplayValue(value)
+      return
+    }
     let startTime: number
     let animationFrame: number
 
@@ -52,9 +57,9 @@ export function NumberCounter({ value, duration = 2, className, decimals = 0 }: 
   return (
     <motion.span
       className={className}
-      initial={{ opacity: 0, scale: 0.5 }}
+      initial={{ opacity: 0, scale: reducedMotion ? 1 : 0.5 }}
       animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.5 }}
+      transition={{ duration: reducedMotion ? 0.15 : 0.5 }}
     >
       {formatted}
     </motion.span>

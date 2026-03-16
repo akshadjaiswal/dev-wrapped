@@ -1,7 +1,3 @@
-/* ===== FONT IMPORTS ===== */
-/* Import all theme fonts from Google Fonts - must be first */
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Space+Mono:wght@400;700&family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@300;400;500;600;700&family=DM+Sans:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -65,8 +61,8 @@
   --glow-accent: 0 0 20px rgba(112, 0, 255, 0.8), 0 0 40px rgba(112, 0, 255, 0.4);
 
   /* Fonts */
-  --font-header: 'Orbitron', sans-serif;
-  --font-body: 'Space Mono', monospace;
+  --font-header: var(--font-orbitron), sans-serif;
+  --font-body: var(--font-space-mono), monospace;
 
   /* Gradients */
   --gradient-primary: linear-gradient(135deg, rgb(0, 240, 255) 0%, rgb(112, 0, 255) 100%);
@@ -92,8 +88,8 @@
   --glow-accent: 0 0 25px rgba(255, 0, 110, 0.8), 0 0 50px rgba(255, 0, 110, 0.4);
 
   /* Fonts */
-  --font-header: 'Outfit', sans-serif;
-  --font-body: 'JetBrains Mono', monospace;
+  --font-header: var(--font-outfit), sans-serif;
+  --font-body: var(--font-jetbrains-mono), monospace;
 
   /* Gradients */
   --gradient-primary: linear-gradient(135deg, rgb(10, 14, 39) 0%, rgb(36, 0, 70) 100%);
@@ -119,8 +115,8 @@
   --glow-accent: 0 0 10px rgba(204, 255, 0, 1), 0 0 20px rgba(204, 255, 0, 0.6);
 
   /* Fonts */
-  --font-header: 'IBM Plex Mono', monospace;
-  --font-body: 'IBM Plex Mono', monospace;
+  --font-header: var(--font-ibm-plex-mono), monospace;
+  --font-body: var(--font-ibm-plex-mono), monospace;
 
   /* Gradients */
   --gradient-primary: linear-gradient(135deg, rgb(0, 255, 65) 0%, rgb(204, 255, 0) 100%);
@@ -146,8 +142,8 @@
   --glow-accent: 0 0 30px rgba(254, 220, 86, 0.6), 0 0 60px rgba(254, 220, 86, 0.3);
 
   /* Fonts */
-  --font-header: 'DM Sans', sans-serif;
-  --font-body: 'Inter', sans-serif;
+  --font-header: var(--font-dm-sans), sans-serif;
+  --font-body: var(--font-inter), sans-serif;
 
   /* Gradients */
   --gradient-primary: linear-gradient(135deg, rgb(45, 27, 105) 0%, rgb(244, 162, 97) 100%);
@@ -288,7 +284,7 @@
 
   /* Full screen slides */
   .slide-container {
-    @apply min-h-screen w-full flex items-center justify-center p-6 relative overflow-hidden;
+    @apply min-h-dvh w-full flex items-center justify-center p-6 relative overflow-hidden;
     background-color: rgb(var(--background));
     color: rgb(var(--foreground));
   }

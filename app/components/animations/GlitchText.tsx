@@ -6,7 +6,7 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
-import { motion } from 'framer-motion'
+import { motion, useReducedMotion } from 'framer-motion'
 
 interface GlitchTextProps {
   text: string
@@ -16,8 +16,11 @@ interface GlitchTextProps {
 
 export function GlitchText({ text, className, glitchIntensity = 'medium' }: GlitchTextProps) {
   const [glitchedText, setGlitchedText] = useState(text)
+  const reducedMotion = useReducedMotion()
 
   useEffect(() => {
+    if (reducedMotion) return
+
     const intervals = {
       low: 5000,
       medium: 3000,
@@ -42,7 +45,7 @@ export function GlitchText({ text, className, glitchIntensity = 'medium' }: Glit
     const interval = setInterval(glitch, intervals[glitchIntensity])
 
     return () => clearInterval(interval)
-  }, [text, glitchIntensity])
+  }, [text, glitchIntensity, reducedMotion])
 
   return (
     <motion.span

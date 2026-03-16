@@ -6,7 +6,7 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
-import { motion } from 'framer-motion'
+import { motion, useReducedMotion } from 'framer-motion'
 
 interface TypewriterTextProps {
   text: string
@@ -23,10 +23,16 @@ export function TypewriterText({
   className,
   showCursor = true
 }: TypewriterTextProps) {
-  const [displayText, setDisplayText] = useState('')
-  const [currentIndex, setCurrentIndex] = useState(0)
+  const reducedMotion = useReducedMotion()
+  const [displayText, setDisplayText] = useState(reducedMotion ? text : '')
+  const [currentIndex, setCurrentIndex] = useState(reducedMotion ? text.length : 0)
 
   useEffect(() => {
+    if (reducedMotion) {
+      setDisplayText(text)
+      setCurrentIndex(text.length)
+      return
+    }
     const timeout = setTimeout(() => {
       if (currentIndex < text.length) {
         setDisplayText(prev => prev + text[currentIndex])
@@ -35,7 +41,7 @@ export function TypewriterText({
     }, currentIndex === 0 ? delay : speed)
 
     return () => clearTimeout(timeout)
-  }, [currentIndex, text, delay, speed])
+  }, [currentIndex, text, delay, speed, reducedMotion])
 
   return (
     <span className={className}>
