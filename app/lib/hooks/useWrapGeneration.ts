@@ -9,16 +9,16 @@ import { useQuery } from '@tanstack/react-query'
 import axios from 'axios'
 import type { AnalyzeResponse, WrapData } from '@/lib/types'
 
-export function useWrapGeneration(username: string | null) {
+export function useWrapGeneration(username: string | null, year = 2025) {
   return useQuery({
-    queryKey: ['wrap', username],
+    queryKey: ['wrap', username, year],
     queryFn: async (): Promise<WrapData> => {
       if (!username) {
         throw new Error('Username is required')
       }
 
       const response = await axios.get<AnalyzeResponse>(
-        `/api/analyze/${username}`
+        `/api/analyze/${username}?year=${year}`
       )
 
       if (!response.data.success || !response.data.data) {

@@ -31,7 +31,8 @@ export async function GET(
 
   try {
     const { username } = await params
-    const year = 2025 // Current year
+    const yearParam = request.nextUrl.searchParams.get('year')
+    const year = yearParam ? parseInt(yearParam, 10) : 2025
 
     // Validate username
     if (!username || username.trim().length === 0) {
@@ -67,12 +68,12 @@ export async function GET(
       .single()
 
     if (cachedWrap) {
-      const cacheAge = Date.now() - new Date(cachedWrap.created_at).getTime()
+      const cacheAge = Date.now() - new Date(cachedWrap.updated_at ?? cachedWrap.created_at).getTime()
       const twentyFourHours = 24 * 60 * 60 * 1000
 
       // If cache is less than 24 hours old, return it
       if (cacheAge < twentyFourHours) {
-        console.log(`[ANALYZE] Cache hit for ${username}`)
+        if (process.env.NODE_ENV === 'development') console.log(`[ANALYZE] Cache hit for ${username}`)
         return NextResponse.json<AnalyzeResponse>({
           success: true,
           data: cachedWrap as WrapData,
@@ -81,7 +82,7 @@ export async function GET(
       }
     }
 
-    console.log(`[ANALYZE] Fetching fresh data for ${username}`)
+    if (process.env.NODE_ENV === 'development') console.log(`[ANALYZE] Fetching fresh data for ${username}`)
 
     // Fetch GitHub data with year parameter for GraphQL
     const githubData = await fetchCompleteGitHubData(username, year)
@@ -95,7 +96,7 @@ export async function GET(
       wrapData.total_repos || 0
     )
 
-    console.log('[ANALYZE] Personality analysis input:', {
+    if (process.env.NODE_ENV === 'development') console.log('[ANALYZE] Personality analysis input:', {
       username,
       commits: wrapData.total_commits,
       repos: wrapData.total_repos,
@@ -115,7 +116,7 @@ export async function GET(
       avgCommitSize: commitSize,
     })
 
-    console.log('[ANALYZE] Personality result:', personality)
+    if (process.env.NODE_ENV === 'development') console.log('[ANALYZE] Personality result:', personality)
 
     // Add personality to wrap data
     const completeWrapData = {
@@ -125,12 +126,15 @@ export async function GET(
       personality_traits: personality.traits,
     }
 
+    // Strip fields not present in the DB schema before upsert
+    const { repos_created_in_year, ...dbSafeWrapData } = completeWrapData
+
     // Save to database (upsert)
     const { data: savedWrap, error: saveError } = await supabase
       .from('wraps')
       .upsert(
         {
-          ...completeWrapData,
+          ...dbSafeWrapData,
           username,
           year,
           updated_at: new Date().toISOString(),
@@ -149,7 +153,7 @@ export async function GET(
     }
 
     const duration = Date.now() - startTime
-    console.log(`[ANALYZE] Completed in ${duration}ms for ${username}`)
+    if (process.env.NODE_ENV === 'development') console.log(`[ANALYZE] Completed in ${duration}ms for ${username}`)
 
     return NextResponse.json<AnalyzeResponse>({
       success: true,

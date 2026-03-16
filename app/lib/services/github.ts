@@ -21,19 +21,21 @@ function getGitHubToken(): string {
   return process.env.GITHUB_TOKEN || ''
 }
 
-// Log token status at module load
-const tokenAtLoad = getGitHubToken()
-console.log('[GITHUB] Token status:', {
-  exists: !!tokenAtLoad,
-  length: tokenAtLoad.length,
-  prefix: tokenAtLoad.substring(0, 4),
-})
+// Log token status at module load (dev only)
+if (process.env.NODE_ENV === 'development') {
+  const tokenAtLoad = getGitHubToken()
+  console.log('[GITHUB] Token status:', {
+    exists: !!tokenAtLoad,
+    length: tokenAtLoad.length,
+    prefix: tokenAtLoad.substring(0, 4),
+  })
 
-if (tokenAtLoad) {
-  console.log('[GITHUB] ✅ Using authenticated requests (5000 req/hour)')
-} else {
-  console.warn('[GITHUB] ⚠️  No GITHUB_TOKEN found - using unauthenticated requests (60 req/hour)')
-  console.warn('[GITHUB] Add GITHUB_TOKEN to .env.local to avoid rate limits')
+  if (tokenAtLoad) {
+    console.log('[GITHUB] ✅ Using authenticated requests (5000 req/hour)')
+  } else {
+    console.warn('[GITHUB] ⚠️  No GITHUB_TOKEN found - using unauthenticated requests (60 req/hour)')
+    console.warn('[GITHUB] Add GITHUB_TOKEN to .env.local to avoid rate limits')
+  }
 }
 
 // Configure axios instance with interceptor to add token dynamically
@@ -59,7 +61,7 @@ githubClient.interceptors.response.use(
   (response) => {
     const remaining = response.headers['x-ratelimit-remaining']
     const limit = response.headers['x-ratelimit-limit']
-    if (remaining) {
+    if (remaining && process.env.NODE_ENV === 'development') {
       console.log(`[GITHUB] Rate limit: ${remaining}/${limit} remaining`)
     }
     return response
@@ -243,7 +245,7 @@ export async function fetchUserEvents(username: string): Promise<GitHubEvent[]> 
       page++
     }
 
-    console.log(`[GITHUB] Fetched ${events.length} events for ${username}`)
+    if (process.env.NODE_ENV === 'development') console.log(`[GITHUB] Fetched ${events.length} events for ${username}`)
     return events
   } catch (error) {
     // Events are not critical, return empty array if fails
@@ -372,7 +374,7 @@ export async function fetchCompleteGitHubData(
       const { fetchContributionsGraphQL, getYearDateRange } = await import('./github-graphql')
       const { from, to } = getYearDateRange(year)
 
-      console.log(`[GITHUB] Fetching GraphQL contributions from ${from} to ${to}`)
+      if (process.env.NODE_ENV === 'development') console.log(`[GITHUB] Fetching GraphQL contributions from ${from} to ${to}`)
       const contributionsData = await fetchContributionsGraphQL(username, from, to)
 
       totalCommits = contributionsData.totalCommitContributions
@@ -407,10 +409,10 @@ export async function fetchCompleteGitHubData(
           language: repoContrib.repository.primaryLanguage?.name || null,
         }))
 
-        console.log(`[GITHUB] ✅ GraphQL: ${totalCommits} commits across ${repositoryCommits.length} repositories`)
+        if (process.env.NODE_ENV === 'development') console.log(`[GITHUB] ✅ GraphQL: ${totalCommits} commits across ${repositoryCommits.length} repositories`)
       }
 
-      console.log(`[GITHUB] ✅ GraphQL: ${graphqlContributions.length} days of contribution data`)
+      if (process.env.NODE_ENV === 'development') console.log(`[GITHUB] ✅ GraphQL: ${graphqlContributions.length} days of contribution data`)
     } catch (graphqlError) {
       console.error('[GITHUB] GraphQL fetch failed, falling back to events API:', graphqlError)
       // GraphQL failed, we'll fall back to events API in calculations
