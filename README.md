@@ -25,10 +25,11 @@
 Every year, Spotify Wrapped makes us excited to share our music journey. But what about our code journey? **DevWrapped** brings that same excitement to developers by transforming your GitHub activity into a stunning, animated year-in-review experience.
 
 - 🆓 **Completely Free** - No paywalls, no premium tiers
-- 🔓 **No Login Required** - Just enter a GitHub username
+- 🔓 **No Login Required** - Just enter a GitHub username or paste your GitHub profile URL
 - 🎨 **Beautiful Design** - 14 animated slides with 5 unique themes
 - 🤖 **AI-Powered** - Groq generates personalized developer personalities
 - 📊 **Accurate Data** - Uses GitHub GraphQL API for precise statistics
+- ♿ **Accessible** - Keyboard navigation, focus rings, screen reader labels, reduced motion support
 - 🌙 **Dark Mode First** - Designed for developers who code at night
 - 📱 **Share Ready** - Perfect for social media, portfolios, and README badges
 
@@ -84,7 +85,7 @@ Groq AI analyzes your coding patterns to generate:
 
 | Technology | Purpose | Why We Chose It |
 |-----------|---------|----------------|
-| **Next.js 15** | React Framework | App router, server components, API routes |
+| **Next.js 16** | React Framework | App router, server components, API routes |
 | **TypeScript** | Type Safety | Catch bugs early, better DX |
 | **Supabase** | Database & Auth | 24-hour caching, RLS policies |
 | **GitHub GraphQL** | Data Source | Accurate full-year commit data |
